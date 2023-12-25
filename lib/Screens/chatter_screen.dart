@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:chatters_2/API/api.dart';
 import 'package:chatters_2/Models/messages.dart';
 import 'package:chatters_2/Models/user.dart';
+import 'package:chatters_2/Screens/view_user_profile_screen.dart';
 import 'package:chatters_2/Support/data_utils.dart';
 import 'package:chatters_2/Widgets/messages.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
@@ -135,10 +136,10 @@ class _ChatterScreenState extends State<ChatterScreen> {
   Widget _appBar() {
     return InkWell(
         onTap: () {
-          // Navigator.push(
-          //     context,
-          //     MaterialPageRoute(
-          //         builder: (_) => ViewProfileScreen(user: widget.user)));
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => ViewProfileScreen(user: widget.user)));
         },
         child: StreamBuilder(
             stream: APIs.getUserInfo(widget.user),
