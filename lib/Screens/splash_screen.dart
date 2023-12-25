@@ -1,7 +1,6 @@
 //import 'package:flutter/cupertino.dart';
 import 'dart:developer';
 import 'package:chatters_2/API/api.dart';
-import 'package:chatters_2/Screens/auth/login_screen.dart';
 import 'package:chatters_2/Screens/auth/sign_in.dart';
 import 'package:chatters_2/Screens/home_screen.dart';
 import 'package:chatters_2/core/repository/user_repo.dart';

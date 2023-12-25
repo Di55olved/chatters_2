@@ -1,4 +1,3 @@
-
 import 'package:chatters_2/API/api.dart';
 import 'package:chatters_2/Models/user.dart';
 import 'package:chatters_2/Screens/profile_screen.dart';
@@ -10,6 +9,7 @@ import 'package:chatters_2/core/repository/user_repo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -34,6 +34,26 @@ class _HomeScreenState extends State<HomeScreen> {
     _userBloc = UserBloc(userRepository: widget.userRepository);
     _userBloc.add(const FetchUser());
     APIs.getSelfInfo();
+
+//for updating user active status according to lifecycle events
+    //resume -- active or online
+    //pause  -- inactive or offline
+    APIs.updateActiveStatus(true);
+
+    SystemChannels.lifecycle.setMessageHandler((message) {
+      print('Message: $message');
+
+      if (APIs.auth.currentUser != null) {
+        if (message.toString().contains('resume')) {
+          APIs.updateActiveStatus(true);
+        }
+        if (message.toString().contains('pause')) {
+          APIs.updateActiveStatus(false);
+        }
+      }
+
+      return Future.value(message);
+    });
   }
 
   @override
@@ -67,11 +87,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         _searchList.clear();
 
                         for (var i in _userList) {
-                          if (i.name
-                                  !.toLowerCase()
+                          if (i.name!
+                                  .toLowerCase()
                                   .contains(val.toLowerCase()) ||
-                              i.email
-                                  !.toLowerCase()
+                              i.email!
+                                  .toLowerCase()
                                   .contains(val.toLowerCase())) {
                             _searchList.add(i);
                             setState(() {
@@ -100,7 +120,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (_) => ProfileScreen(user: APIs.me, userRepository: widget.userRepository)));
+                            builder: (_) => ProfileScreen(
+                                user: APIs.me,
+                                userRepository: widget.userRepository)));
                   },
                   icon: const Icon(Icons.more_vert),
                   color: Colors.black,
@@ -131,7 +153,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     stream: state.user(),
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
-                         _userList = snapshot.data!.docs
+                        _userList = snapshot.data!.docs
                             .map((doc) => Cuser.fromJson(doc.data()))
                             .toList();
 
@@ -146,14 +168,18 @@ class _HomeScreenState extends State<HomeScreen> {
                         }
 
                         return ListView.builder(
-                          itemCount: _isSearching ? _searchList.length : _userList.length,
+                          itemCount: _isSearching
+                              ? _searchList.length
+                              : _userList.length,
                           padding: EdgeInsets.only(
                             top: MediaQuery.of(context).size.height * .01,
                           ),
                           physics: const BouncingScrollPhysics(),
                           itemBuilder: (context, index) {
                             return ChatterCard(
-                              user: _isSearching ? _searchList[index] : _userList[index],
+                              user: _isSearching
+                                  ? _searchList[index]
+                                  : _userList[index],
                             );
                           },
                         );
@@ -180,8 +206,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 }
                 return const SizedBox();
               },
-            )
-            ),
+            )),
       ),
     );
   }

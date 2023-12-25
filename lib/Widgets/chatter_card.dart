@@ -1,9 +1,9 @@
-
 import 'package:chatters_2/API/api.dart';
 import 'package:chatters_2/Models/messages.dart';
 import 'package:chatters_2/Models/user.dart';
 import 'package:chatters_2/Screens/chatter_screen.dart';
 import 'package:chatters_2/Support/data_utils.dart';
+import 'package:chatters_2/Widgets/profile_dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -54,15 +54,23 @@ class _ChatterCardState extends State<ChatterCard> {
                   height: MediaQuery.of(context).size.width *
                       0.1, // Adjust as needed
 
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(
-                        MediaQuery.of(context).size.height * 0.03),
-                    child: CachedNetworkImage(
-                      width: MediaQuery.sizeOf(context).width * .055,
-                      height: MediaQuery.sizeOf(context).height * .055,
-                      imageUrl: widget.user.image!,
-                      errorWidget: (context, url, error) => const CircleAvatar(
-                        child: Icon(CupertinoIcons.person),
+                  child: InkWell(
+                    onTap: () {
+                      showDialog(
+                          context: context,
+                          builder: (_) => ProfileDialog(user: widget.user));
+                    },
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(
+                          MediaQuery.of(context).size.height * 0.03),
+                      child: CachedNetworkImage(
+                        width: MediaQuery.sizeOf(context).width * .055,
+                        height: MediaQuery.sizeOf(context).height * .055,
+                        imageUrl: widget.user.image!,
+                        errorWidget: (context, url, error) =>
+                            const CircleAvatar(
+                          child: Icon(CupertinoIcons.person),
+                        ),
                       ),
                     ),
                   ),
@@ -70,30 +78,32 @@ class _ChatterCardState extends State<ChatterCard> {
                 title: Text(widget.user.name!),
                 subtitle: Text(
                   //show latest message
-                  _message != null ?
-                    _message!.type == Type.image ? 'image':
-                   _message!.msg : widget.user.about!,
+                  _message != null
+                      ? _message!.type == Type.image
+                          ? 'image'
+                          : _message!.msg
+                      : widget.user.about!,
                   maxLines: 1,
                 ),
-                trailing:
-                _message==null? null //no messages
-                : 
-                //show when message unread
-                _message!.read.isEmpty && _message?.fromId != APIs.user.uid ?
-                Container(
-                  width: 15,
-                  height: 15,
-                  decoration: BoxDecoration(
-                    color: Colors.greenAccent.shade400,
-                    borderRadius: BorderRadius.circular(10)
-                  ),
-                ): 
-                //message read
-                Text(
-                  MyDateUtil.getLastMessageTime(context:context,time: _message!.sent)
-                 ,
-                  style: const TextStyle(color: Colors.black45),
-                ),
+                trailing: _message == null
+                    ? null //no messages
+                    :
+                    //show when message unread
+                    _message!.read.isEmpty && _message?.fromId != APIs.user.uid
+                        ? Container(
+                            width: 15,
+                            height: 15,
+                            decoration: BoxDecoration(
+                                color: Colors.greenAccent.shade400,
+                                borderRadius: BorderRadius.circular(10)),
+                          )
+                        :
+                        //message read
+                        Text(
+                            MyDateUtil.getLastMessageTime(
+                                context: context, time: _message!.sent),
+                            style: const TextStyle(color: Colors.black45),
+                          ),
               );
             },
           )),

@@ -178,6 +178,7 @@ class APIs extends ChangeNotifier {
     final imageUrl = await ref.getDownloadURL();
     await sendMessage(chatUser, imageUrl, Type.image);
   }
+
 }
 
 
