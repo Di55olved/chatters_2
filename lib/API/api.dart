@@ -1,11 +1,15 @@
+import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:chatters_2/Models/messages.dart';
 import 'package:chatters_2/Models/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 
 class APIs extends ChangeNotifier {
   //for auntheniciation
@@ -20,6 +24,42 @@ class APIs extends ChangeNotifier {
   static FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   static FirebaseStorage storage = FirebaseStorage.instance;
+
+  //for accessing firebase messaging (push notifications)
+  static FirebaseMessaging fmessaging = FirebaseMessaging.instance;
+
+  //for getting FirebaseMessaging token
+  static Future<void> getFirebaseMessagingToken() async {
+    await fmessaging.requestPermission();
+    fmessaging.getToken().then((value) {
+      if (value != null) {
+        me.pushToken = value;
+        print('push token: $value');
+      }
+    });
+  }
+
+  //send push notifications
+  static Future<void> sendPushNotifications(Cuser cuser, String msg) async {
+    try {
+      final body = {
+        "to": cuser.pushToken,
+        "notification": {"title": cuser.name, "body": msg}
+      };
+      var response =
+          await post(Uri.parse("https://fcm.googleapis.com/fcm/send"),
+              headers: {
+                HttpHeaders.contentTypeHeader: 'application/json',
+                HttpHeaders.authorizationHeader:
+                    "key=AAAAwrJIhbw:APA91bHKQRP9Bjz5n40ri4z7T3dgM9bkQWtZ1FDlH4qOLiLigZkE44sUw_dj6YPfy0FkZ5kD7feD-DiOSsMD0MuQOsKji5RAybB1r9mupj1uLT6VR3Q491G1CJ2SEo-g3yG-TiFVTtnT"
+              },
+              body: jsonEncode(body));
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+    } catch (e) {
+      print("\nsendPushNotifications: $e");
+    }
+  }
 
   static late Cuser me;
   //getter method
@@ -40,7 +80,9 @@ class APIs extends ChangeNotifier {
       if (user.exists) {
         me = Cuser.fromJson(user.data()!);
         //   me = Cuser.fromJson(user.data()!);
-        print('My Data:${user.data()}');
+        await getFirebaseMessagingToken();
+        APIs.updateActiveStatus(true);
+        log('My Data:${user.data()}');
       } else {
         await createChatter().then((value) => getSelfInfo());
       }
@@ -94,7 +136,8 @@ class APIs extends ChangeNotifier {
     final ref =
         firestore.collection('chats/${getConversationID(cuser.id!)}/messages/');
 
-    await ref.doc(time).set(message.toJson());
+    await ref.doc(time).set(message.toJson()).then((value) =>
+        sendPushNotifications(cuser, type == Type.text ? msg : 'image'));
   }
 
 //get all msg for a specific conversation from firestore
@@ -198,6 +241,7 @@ class APIs extends ChangeNotifier {
     firestore.collection('users').doc(user.uid).update({
       ' is_online': isOnline,
       'last_active': DateTime.now().millisecondsSinceEpoch.toString(),
+      'push_token': me.pushToken,
       //    'push_token': me.pushToken,
     });
   }

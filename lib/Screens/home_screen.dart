@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:chatters_2/API/api.dart';
 import 'package:chatters_2/Models/user.dart';
 import 'package:chatters_2/Screens/profile_screen.dart';
@@ -38,10 +40,10 @@ class _HomeScreenState extends State<HomeScreen> {
 //for updating user active status according to lifecycle events
     //resume -- active or online
     //pause  -- inactive or offline
-    APIs.updateActiveStatus(true);
+    // APIs.updateActiveStatus(true);
 
     SystemChannels.lifecycle.setMessageHandler((message) {
-      print('Message: $message');
+      log('Message: $message');
 
       if (APIs.auth.currentUser != null) {
         if (message.toString().contains('resume')) {

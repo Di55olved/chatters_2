@@ -63,7 +63,7 @@ class _SplashScreenState extends State<SplashScreen> {
               child: const Text(
                 "Powered by IBA",
                 style: TextStyle(
-                  color: Colors.black,
+                  color: Colors.white,
                   fontWeight: FontWeight.w300,
                   fontSize: 20.0,
                 ),
