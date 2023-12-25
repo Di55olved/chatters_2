@@ -194,5 +194,13 @@ static Future<void> updateMessageReadStatus(Messages message) async {
     });
   }
 
+  //update message
+  static Future<void> updateMessage(Messages message, String updatedMsg) async {
+    await firestore
+        .collection('chats/${getConversationID(message.toId)}/messages/')
+        .doc(message.sent)
+        .update({'msg': updatedMsg});
+  
+  }
 }
-//firestore.collection("users").where('id',isNotEqualTo: user.uid).snapshots();
+  //firestore.collection("users").where('id',isNotEqualTo: user.uid).snapshots()

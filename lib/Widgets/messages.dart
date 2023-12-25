@@ -1,5 +1,3 @@
-
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatters_2/API/api.dart';
 import 'package:chatters_2/Models/messages.dart';
@@ -136,9 +134,15 @@ class _MessageCardState extends State<MessageCard> {
             child: widget.messages.type == Type.text
                 ?
                 //show text
-                Text(
-                    widget.messages.msg,
-                    style: const TextStyle(fontSize: 15, color: Colors.black87),
+                GestureDetector(
+                    onLongPress: () {
+                      _showMessageUpdateDialog();
+                    },
+                    child: Text(
+                      widget.messages.msg,
+                      style:
+                          const TextStyle(fontSize: 15, color: Colors.black87),
+                    ),
                   )
                 :
                 //show image
@@ -164,5 +168,76 @@ class _MessageCardState extends State<MessageCard> {
         ),
       ],
     );
+  }
+
+  //dialog for updating message content
+  void _showMessageUpdateDialog() {
+    String updatedMsg = widget.messages.msg;
+    BuildContext? dialogContext;
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          dialogContext = context;
+          return AlertDialog(
+            contentPadding:
+                const EdgeInsets.only(left: 24, right: 24, top: 20, bottom: 10),
+
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+
+            //title
+            title: Row(
+              children: const [
+                Icon(
+                  Icons.message,
+                  color: Colors.blue,
+                  size: 28,
+                ),
+                Text(' Update Message')
+              ],
+            ),
+
+            //content
+            content: TextFormField(
+              initialValue: updatedMsg,
+              maxLines: null,
+              onChanged: (value) => updatedMsg = value,
+              decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15))),
+            ),
+
+            //actions
+            actions: [
+              //cancel button
+              MaterialButton(
+                  onPressed: () {
+                    //hide alert dialog
+                    Navigator.pop(context);
+                  },
+                  child: const Text(
+                    'Cancel',
+                    style: TextStyle(color: Colors.blue, fontSize: 16),
+                  )),
+
+              //update button
+              MaterialButton(
+                  onPressed: () {
+                    //hide alert dialog
+                    Navigator.pop(context);
+                    APIs.updateMessage(widget.messages, updatedMsg);
+                  },
+                  child: const Text(
+                    'Update',
+                    style: TextStyle(color: Colors.blue, fontSize: 16),
+                  ))
+            ],
+          );
+        }).then((_) {
+      // Use the stored context to safely dismiss the dialog
+      if (dialogContext != null && mounted) {
+        Navigator.pop(dialogContext!);
+      }
+    });
   }
 }

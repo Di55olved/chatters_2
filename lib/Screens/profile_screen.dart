@@ -97,26 +97,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: Stack(children: [
                       _image != null
                           ?
-
                           //local image
+
                           ClipRRect(
-                              borderRadius:
-                                  BorderRadius.circular(MediaQuery.sizeOf(context).height * .1),
-                              child: Image.file(File(_image!),
-                                  width: MediaQuery.sizeOf(context).height * .15,
-                                  height: MediaQuery.sizeOf(context).height * .15,
-                                  fit: BoxFit.cover))
-                          : ClipRRect(
                               borderRadius: BorderRadius.circular(
-                                  MediaQuery.of(context).size.height * 0.03),
+                                  MediaQuery.sizeOf(context).height * .1),
+                              child: Image.file(File(_image!),
+                                  width:
+                                      MediaQuery.sizeOf(context).height * .2,
+                                  height:
+                                      MediaQuery.sizeOf(context).height * .2,
+                                  fit: BoxFit.cover))
+                          :
+
+                          //user profile picture
+                          ClipRRect(
+                              borderRadius: BorderRadius.circular(
+                                  MediaQuery.sizeOf(context).height * .1),
                               child: CachedNetworkImage(
-                                width: MediaQuery.sizeOf(context).width * .15,
-                                height: MediaQuery.sizeOf(context).height * .15,
+                                width: MediaQuery.sizeOf(context).height * .2,
+                                height: MediaQuery.sizeOf(context).height * .2,
+                                fit: BoxFit.cover,
                                 imageUrl: widget.user.image!,
                                 errorWidget: (context, url, error) =>
                                     const CircleAvatar(
-                                  child: Icon(CupertinoIcons.person),
-                                ),
+                                        child: Icon(CupertinoIcons.person)),
                               ),
                             ),
                       Positioned(
@@ -135,6 +140,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                         ),
                       )
+                      
                     ]),
                   ),
                 ),
@@ -180,7 +186,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     height: MediaQuery.sizeOf(context).height * 0.03),
                 ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
-                      shape: const  StadiumBorder(),
+                      shape: const StadiumBorder(),
                       minimumSize: Size(MediaQuery.sizeOf(context).width * .5,
                           MediaQuery.sizeOf(context).height * 0.06)),
                   onPressed: () {
@@ -196,7 +202,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Icons.edit,
                     size: 28,
                   ),
-                label: const Text(
+                  label: const Text(
                     'Update',
                     style: TextStyle(fontSize: 16),
                   ),
@@ -249,7 +255,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         final XFile? image = await picker.pickImage(
                             source: ImageSource.gallery, imageQuality: 80);
                         if (image != null) {
-       //                   log('Image Path: ${image.path}');
+                          //                   log('Image Path: ${image.path}');
                           setState(() {
                             _image = image.path;
                           });
@@ -275,7 +281,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         final XFile? image = await picker.pickImage(
                             source: ImageSource.camera, imageQuality: 80);
                         if (image != null) {
-           //               log('Image Path: ${image.path}');
+                          //               log('Image Path: ${image.path}');
                           setState(() {
                             _image = image.path;
                           });
