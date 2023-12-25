@@ -4,6 +4,7 @@ import 'package:chatters_2/Models/user.dart';
 import 'package:chatters_2/Screens/auth/login_screen.dart';
 import 'package:chatters_2/Screens/auth/sign_in.dart';
 import 'package:chatters_2/core/repository/user_repo.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -54,6 +55,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             onPressed: () async {
               Dialogs.showProgressBar(context);
 
+              await APIs.updateActiveStatus(false);
+
               await APIs.auth.signOut().then((value) async {
                 await GoogleSignIn().signOut().then((value) {
                   //first for prof screen
@@ -61,6 +64,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   //second for home screen
                   Navigator.pop(context);
 
+                  APIs.auth = FirebaseAuth.instance;
                   Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
