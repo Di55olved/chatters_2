@@ -51,7 +51,7 @@ class APIs extends ChangeNotifier {
   static Future<void> createChatter(
       {String name = 'Unnamed',
       String imageURL =
-          'https://img.freepik.com/premium-vector/alien-vector-cartoon-art-illustration-isolated-background_493087-46.jpg'}) async {
+          'https://static.wikia.nocookie.net/jujutsu-kaisen/images/3/3d/Toji_kills_himself_to_save_Megumi_%28Anime%29.png/revision/latest?cb=20231109213017'}) async {
     final time = DateTime.now().toString();
 
     final chatterUser = Cuser(

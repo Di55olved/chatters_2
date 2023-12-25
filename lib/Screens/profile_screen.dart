@@ -108,7 +108,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 width: MediaQuery.sizeOf(context).height * .2,
                                 height: MediaQuery.sizeOf(context).height * .2,
                                 fit: BoxFit.cover,
-                                imageUrl: widget.user.image!,
+                                imageUrl: widget.user.image.toString(),
                                 errorWidget: (context, url, error) =>
                                     const CircleAvatar(
                                         child: Icon(CupertinoIcons.person)),
