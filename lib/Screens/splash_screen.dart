@@ -64,7 +64,6 @@ class _SplashScreenState extends State<SplashScreen> {
                 "Powered by IBA",
                 style: TextStyle(
                   color: Colors.white,
-                  fontWeight: FontWeight.w300,
                   fontSize: 20.0,
                 ),
                 textAlign: TextAlign.center,

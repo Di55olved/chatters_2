@@ -269,5 +269,17 @@ class APIs extends ChangeNotifier {
         .doc(message.sent)
         .update({'msg': updatedMsg});
   }
+
+  //delete message
+  static Future<void> deleteMessage(Messages message) async {
+    await firestore
+        .collection('chats/${getConversationID(message.toId)}/messages/')
+        .doc(message.sent)
+        .delete();
+
+    if (message.type == Type.image) {
+      await storage.refFromURL(message.msg).delete();
+    }
+  }
 }
   //firestore.collection("users").where('id',isNotEqualTo: user.uid).snapshots()

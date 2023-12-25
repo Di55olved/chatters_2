@@ -1,8 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chatters_2/Support/dialogs.dart';
+import 'package:flutter/material.dart';
+
 import 'package:chatters_2/API/api.dart';
 import 'package:chatters_2/Models/messages.dart';
 import 'package:chatters_2/Support/data_utils.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 
 class MessageCard extends StatefulWidget {
   const MessageCard({super.key, required this.messages});
@@ -16,9 +21,14 @@ class MessageCard extends StatefulWidget {
 class _MessageCardState extends State<MessageCard> {
   @override
   Widget build(BuildContext context) {
-    //final fromId = .trim().toLowerCase();
-    // print('From ID: $fromId');
-    return widget.messages.fromId == APIs.user.uid ? __greenMsg() : __blueMsg();
+    bool check = widget.messages.fromId == APIs.user.uid;
+
+    return InkWell(
+      onLongPress: () {
+        _showBottomSheet(check);
+      },
+      child: check ? __greenMsg() : __blueMsg(),
+    );
   }
 
   Widget __blueMsg() {
@@ -134,15 +144,9 @@ class _MessageCardState extends State<MessageCard> {
             child: widget.messages.type == Type.text
                 ?
                 //show text
-                GestureDetector(
-                    onLongPress: () {
-                      _showMessageUpdateDialog();
-                    },
-                    child: Text(
-                      widget.messages.msg,
-                      style:
-                          const TextStyle(fontSize: 15, color: Colors.black87),
-                    ),
+                Text(
+                    widget.messages.msg,
+                    style: const TextStyle(fontSize: 15, color: Colors.black87),
                   )
                 :
                 //show image
@@ -186,8 +190,8 @@ class _MessageCardState extends State<MessageCard> {
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
 
             //title
-            title: Row(
-              children: const [
+            title: const Row(
+              children: [
                 Icon(
                   Icons.message,
                   color: Colors.blue,
@@ -239,5 +243,159 @@ class _MessageCardState extends State<MessageCard> {
         Navigator.pop(dialogContext!);
       }
     });
+  }
+
+  void _showBottomSheet(bool isMe) {
+    showModalBottomSheet(
+        context: context,
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20), topRight: Radius.circular(20))),
+        builder: (_) {
+          return ListView(
+            shrinkWrap: true,
+            children: [
+              //black divider
+              Container(
+                height: 4,
+                margin: EdgeInsets.symmetric(
+                    vertical: MediaQuery.sizeOf(context).height * .015,
+                    horizontal: MediaQuery.sizeOf(context).width * .4),
+                decoration: BoxDecoration(
+                    color: Colors.grey, borderRadius: BorderRadius.circular(8)),
+              ),
+
+              widget.messages.type == Type.text
+                  ?
+                  //copy option
+                  _OptionItem(
+                      icon: const Icon(Icons.copy_all_rounded,
+                          color: Colors.blue, size: 26),
+                      name: 'Copy Text',
+                      onTap: () async {
+                        await Clipboard.setData(
+                                ClipboardData(text: widget.messages.msg))
+                            .then((value) {
+                          //for hiding bottom sheet
+                          Navigator.pop(context);
+
+                          Dialogs.showSnackBar(context, 'Text Copied!');
+                        });
+                      })
+                  //save Image option
+                  : _OptionItem(
+                      icon: const Icon(
+                        Icons.download_rounded,
+                        color: Colors.blue,
+                        size: 26,
+                      ),
+                      name: 'Save Image',
+                      onTap: () async {
+                        try {
+                          // Fetch image URL from Firestore
+                          String imageUrl = widget.messages.msg;
+
+                          // Use a network library (e.g., http) to download the image data
+                          final response = await http.get(Uri.parse(imageUrl));
+
+                          if (response.statusCode == 200) {
+                            // Convert the response body to Uint8List
+                            Uint8List uint8List = response.bodyBytes;
+
+                            // Save the image to the gallery
+                            await ImageGallerySaver.saveImage(
+                              uint8List,
+                              isReturnImagePathOfIOS:
+                                  true, // Set to true if targeting iOS
+                            );
+
+                            Navigator.pop(context);
+                          } else {
+                            print(
+                                'Failed to download image: ${response.statusCode}');
+                          }
+                        } catch (e) {
+                          print('Error While Saving Image: $e');
+                        }
+                      },
+                    ),
+
+              //edit option
+              if (widget.messages.type == Type.text && isMe)
+                _OptionItem(
+                    icon: const Icon(Icons.edit, color: Colors.blue, size: 26),
+                    name: 'Edit Message',
+                    onTap: () {
+                      //for hiding bottom sheet
+                      Navigator.pop(context);
+
+                      _showMessageUpdateDialog();
+                    }),
+
+              //delete option
+              if (isMe)
+                _OptionItem(
+                    icon: const Icon(Icons.delete_forever,
+                        color: Colors.red, size: 26),
+                    name: 'Delete Message',
+                    onTap: () async {
+                      await APIs.deleteMessage(widget.messages).then((value) {
+                        //for hiding bottom sheet
+                        Navigator.pop(context);
+                      });
+                    }),
+
+              //separator or divider
+              Divider(
+                color: Colors.black54,
+                endIndent: MediaQuery.sizeOf(context).width * .04,
+                indent: MediaQuery.sizeOf(context).width * .04,
+              ),
+
+              //sent time
+              _OptionItem(
+                  icon: const Icon(Icons.remove_red_eye, color: Colors.blue),
+                  name:
+                      'Sent At: ${MyDateUtil.getMessageTime(context: context, time: widget.messages.sent)}',
+                  onTap: () {}),
+
+              //read time
+              _OptionItem(
+                  icon: const Icon(Icons.remove_red_eye, color: Colors.green),
+                  name: widget.messages.read.isEmpty
+                      ? 'Read At: Not seen yet'
+                      : 'Read At: ${MyDateUtil.getMessageTime(context: context, time: widget.messages.read)}',
+                  onTap: () {}),
+            ],
+          );
+        });
+  }
+}
+
+class _OptionItem extends StatelessWidget {
+  final Icon icon;
+  final String name;
+  final VoidCallback onTap;
+
+  const _OptionItem(
+      {required this.icon, required this.name, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () => onTap(),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(children: [
+          icon,
+          Flexible(
+              child: Text(
+            "    $name",
+            style: const TextStyle(
+                fontSize: 15, color: Colors.black54, letterSpacing: 0.5),
+          ))
+        ]),
+      ),
+    );
   }
 }
