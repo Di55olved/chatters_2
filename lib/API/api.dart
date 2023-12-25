@@ -11,6 +11,11 @@ class APIs extends ChangeNotifier {
   //for auntheniciation
   static var auth = FirebaseAuth.instance;
 
+  //color theme:
+  static Color purple = const Color.fromARGB(255, 47, 24, 71);
+  static Color yellow = const Color.fromARGB(255, 255, 201, 0);
+  static Color orange = const Color.fromARGB(255, 241, 89, 70);
+
   // for accessing cloud firestore database
   static FirebaseFirestore firestore = FirebaseFirestore.instance;
 
@@ -44,7 +49,7 @@ class APIs extends ChangeNotifier {
 
   //new chatter
   static Future<void> createChatter(
-      {String Name = 'Unnamed',
+      {String name = 'Unnamed',
       String imageURL =
           'https://img.freepik.com/premium-vector/alien-vector-cartoon-art-illustration-isolated-background_493087-46.jpg'}) async {
     final time = DateTime.now().toString();
@@ -57,7 +62,7 @@ class APIs extends ChangeNotifier {
         lastActive: time,
         email: user.email.toString(),
         pushToken: '',
-        name: Name,
+        name: name,
         image: imageURL);
 
     return (await firestore
@@ -179,7 +184,30 @@ class APIs extends ChangeNotifier {
     await sendMessage(chatUser, imageUrl, Type.image);
   }
 
+  // for getting specific user info
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getUserInfo(
+      Cuser chatUser) {
+    return firestore
+        .collection('users')
+        .where('id', isEqualTo: chatUser.id)
+        .snapshots();
+  }
+
+  // update online or last active status of user
+  static Future<void> updateActiveStatus(bool isOnline) async {
+    firestore.collection('users').doc(user.uid).update({
+      ' is_online': isOnline,
+      'last_active': DateTime.now().millisecondsSinceEpoch.toString(),
+      //    'push_token': me.pushToken,
+    });
+  }
+
+  //update message
+  static Future<void> updateMessage(Messages message, String updatedMsg) async {
+    await firestore
+        .collection('chats/${getConversationID(message.toId)}/messages/')
+        .doc(message.sent)
+        .update({'msg': updatedMsg});
+  }
 }
-
-
-//firestore.collection("users").where('id',isNotEqualTo: user.uid).snapshots();
+  //firestore.collection("users").where('id',isNotEqualTo: user.uid).snapshots()

@@ -48,6 +48,7 @@ dependencies:
   image_picker: ^1.0.5
   email_otp: ^2.1.1
   provider: ^6.1.1
+  intl: ^0.19.0
   
 
 dev_dependencies:
@@ -79,6 +80,7 @@ flutter:
     - assets/images/camera.png
     - assets/images/chat.png
     - assets/images/google.png
+    - assets/images/briefChatLogo.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see
