@@ -34,7 +34,7 @@ class APIs extends ChangeNotifier {
     await firestore.collection("users").doc(user.uid).get().then((user) async {
       if (user.exists) {
         me = Cuser.fromJson(user.data()!);
-     //   me = Cuser.fromJson(user.data()!);
+        //   me = Cuser.fromJson(user.data()!);
         print('My Data:${user.data()}');
       } else {
         await createChatter().then((value) => getSelfInfo());
@@ -43,7 +43,10 @@ class APIs extends ChangeNotifier {
   }
 
   //new chatter
-  static Future<void> createChatter({String name='Unnamed', String imageURL='https://img.freepik.com/premium-vector/alien-vector-cartoon-art-illustration-isolated-background_493087-46.jpg'}) async {
+  static Future<void> createChatter(
+      {String Name = 'Unnamed',
+      String imageURL =
+          'https://img.freepik.com/premium-vector/alien-vector-cartoon-art-illustration-isolated-background_493087-46.jpg'}) async {
     final time = DateTime.now().toString();
 
     final chatterUser = Cuser(
@@ -54,7 +57,7 @@ class APIs extends ChangeNotifier {
         lastActive: time,
         email: user.email.toString(),
         pushToken: '',
-        name: name,
+        name: Name,
         image: imageURL);
 
     return (await firestore
@@ -105,23 +108,22 @@ class APIs extends ChangeNotifier {
     });
   }
 
-static Future<void> updateMessageReadStatus(Messages message) async {
-  try {
-    if (message.read == null || message.read.isEmpty) {
-      await firestore
-          .collection('chats/${getConversationID(message.fromId)}/messages/')
-          .doc(message.sent)
-          .update({'read': DateTime.now().millisecondsSinceEpoch.toString()});
-      print('Read status updated successfully');
-    } else {
-      print('Read status already exists: ${message.read}');
+  static Future<void> updateMessageReadStatus(Messages message) async {
+    try {
+      if (message.read == null || message.read.isEmpty) {
+        await firestore
+            .collection('chats/${getConversationID(message.fromId)}/messages/')
+            .doc(message.sent)
+            .update({'read': DateTime.now().millisecondsSinceEpoch.toString()});
+        print('Read status updated successfully');
+      } else {
+        print('Read status already exists: ${message.read}');
+      }
+    } catch (e) {
+      print('Error updating read status: $e');
+      // Handle the error as needed: log, notify the user, etc.
     }
-  } catch (e) {
-    print('Error updating read status: $e');
-    // Handle the error as needed: log, notify the user, etc.
   }
-}
-
 
   static Stream<QuerySnapshot<Map<String, dynamic>>> getLastMessages(
       Cuser user) {
@@ -132,7 +134,7 @@ static Future<void> updateMessageReadStatus(Messages message) async {
         .snapshots();
   }
 
-    // update profile picture of user
+  // update profile picture of user
   static Future<void> updateProfilePicture(File file) async {
     //getting image file extension
     final ext = file.path.split('.').last;
@@ -156,13 +158,14 @@ static Future<void> updateMessageReadStatus(Messages message) async {
         .update({'image ': me.image});
   }
 
-      // send image as msg
+  // send image as msg
   static Future<void> sendChatImage(Cuser chatUser, File file) async {
     //getting image file extension
     final ext = file.path.split('.').last;
 
     //storage file ref with path
-    final ref = storage.ref().child('images/${getConversationID(chatUser.id!)}/${DateTime.now().microsecondsSinceEpoch}.$ext');
+    final ref = storage.ref().child(
+        'images/${getConversationID(chatUser.id!)}/${DateTime.now().microsecondsSinceEpoch}.$ext');
 
     //uploading image
     await ref
@@ -175,7 +178,6 @@ static Future<void> updateMessageReadStatus(Messages message) async {
     final imageUrl = await ref.getDownloadURL();
     await sendMessage(chatUser, imageUrl, Type.image);
   }
-
 }
 
 

@@ -91,10 +91,13 @@ class _SignUpPageState extends State<SignUpPage> {
                           if (check == true) {
                             await APIs.auth.createUserWithEmailAndPassword(
                                 email: emailValue, password: passValue);
-                            await APIs.createChatter(name: nameValue, imageURL: imageURLValue);
+                            await APIs.createChatter(
+                                Name: nameValue, imageURL: imageURLValue);
                             Navigator.of(context).pushReplacement(
                                 MaterialPageRoute(
-                                    builder: (context) =>  SignInPage(userRepository: widget.userRepository)));
+                                    builder: (context) => SignInPage(
+                                        userRepository:
+                                            widget.userRepository)));
                           } else {
                             ScaffoldMessenger.of(context)
                                 .showSnackBar(const SnackBar(
@@ -363,7 +366,8 @@ class _SignUpPageState extends State<SignUpPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) =>  SignInPage(userRepository: widget.userRepository)),
+                            builder: (context) => SignInPage(
+                                userRepository: widget.userRepository)),
                       );
                     },
                     child: const Text(
