@@ -50,6 +50,7 @@ dependencies:
   provider: ^6.1.1
   intl: ^0.19.0
   firebase_messaging: ^14.7.9
+  flutter_notification_channel: ^2.0.0
   
 
 dev_dependencies:

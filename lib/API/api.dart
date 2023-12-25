@@ -37,6 +37,15 @@ class APIs extends ChangeNotifier {
         print('push token: $value');
       }
     });
+
+    // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    //   print('Got a message whilst in the foreground!');
+    //   print('Message data: ${message.data}');
+
+    //   if (message.notification != null) {
+    //     print('Message also contained a notification: ${message.notification}');
+    //   }
+    // });
   }
 
   //send push notifications
@@ -44,7 +53,14 @@ class APIs extends ChangeNotifier {
     try {
       final body = {
         "to": cuser.pushToken,
-        "notification": {"title": cuser.name, "body": msg}
+        "notification": {
+          "title": cuser.name,
+          "body": msg,
+          "android_channel_id": "chats"
+        },
+        "data": {
+          "click_action": "User ID: ${me.id}",
+        },
       };
       var response =
           await post(Uri.parse("https://fcm.googleapis.com/fcm/send"),
