@@ -1,13 +1,13 @@
 class Cuser {
-  late  String? id;
-  late  String? about;
-  late  String? createdAt;
-  late  bool? isOnline;
-  late  String? lastActive;
-  late  String? email;
-  late  String? pushToken;
-  late  String? name;
-  late  String? image;
+  late String? id;
+  late String? about;
+  late String? createdAt;
+  late bool? isOnline;
+  late String? lastActive;
+  late String? email;
+  late String? pushToken;
+  late String? name;
+  late String? image;
 
   Cuser(
       {required this.id,
@@ -21,15 +21,15 @@ class Cuser {
       required this.image});
 
   Cuser.fromJson(Map<String, dynamic> json) {
-    id = json['id '] ?? " ";
+    id = json['id'] ?? " ";
     about = json['about'] ?? " ";
     createdAt = json['created_at'] ?? " ";
     isOnline = json[' is_online'] ?? false;
     lastActive = json['last_active'] ?? " ";
     email = json['email'] ?? " ";
     pushToken = json['push_token'] ?? " ";
-    name = json['name '] ?? " ";
-    image = json['image '] ?? " ";
+    name = json['name'] ?? " ";
+    image = json['image'] ?? " ";
   }
 
   Map<String, dynamic> toJson() {

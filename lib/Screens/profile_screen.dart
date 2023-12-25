@@ -1,12 +1,12 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 import 'package:chatters_2/API/api.dart';
 import 'package:chatters_2/Models/user.dart';
 import 'package:chatters_2/Screens/auth/sign_in.dart';
 import 'package:chatters_2/core/repository/user_repo.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -56,23 +56,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
               await APIs.updateActiveStatus(false);
 
-              await APIs.auth.signOut().then((value) async {
-                await GoogleSignIn().signOut().then((value) {
-                  //first for prof screen
-                  Navigator.pop(context);
-                  //second for home screen
-                  Navigator.pop(context);
-
-                  APIs.auth = FirebaseAuth.instance;
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (_) => SignInPage(
-                              userRepository: widget.userRepository)));
-                });
-              });
+              await APIs.auth.signOut();
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          SignInPage(userRepository: widget.userRepository)));
             },
-            icon: const Icon(Icons.add_comment_rounded),
+            icon: const Icon(Icons.logout),
             label: const Text('Logout'),
           ),
         ),
@@ -103,8 +94,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               borderRadius: BorderRadius.circular(
                                   MediaQuery.sizeOf(context).height * .1),
                               child: Image.file(File(_image!),
-                                  width:
-                                      MediaQuery.sizeOf(context).height * .2,
+                                  width: MediaQuery.sizeOf(context).height * .2,
                                   height:
                                       MediaQuery.sizeOf(context).height * .2,
                                   fit: BoxFit.cover))
@@ -140,7 +130,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                         ),
                       )
-                      
                     ]),
                   ),
                 ),
