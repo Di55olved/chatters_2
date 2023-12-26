@@ -22,7 +22,7 @@ class _SplashScreenState extends State<SplashScreen> {
     Future.delayed(const Duration(milliseconds: 2000), () {
       if (APIs.auth.currentUser != null) {
         log("User: ${APIs.auth.currentUser}");
-        Navigator.push(
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (_) => HomeScreen(userRepository: widget.userRepository),
@@ -42,9 +42,6 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-      ),
       body: Container(
         decoration: BoxDecoration(color: APIs.purple),
         child: Stack(

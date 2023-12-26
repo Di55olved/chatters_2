@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:chatters_2/API/api.dart';
 import 'package:chatters_2/Models/user.dart';
 import 'package:chatters_2/Screens/profile_screen.dart';
+import 'package:chatters_2/Support/dialogs.dart';
 import 'package:chatters_2/Widgets/chatter_card.dart';
 import 'package:chatters_2/bloc/user_bloc/user_bloc.dart';
 import 'package:chatters_2/bloc/user_bloc/user_events.dart';
@@ -76,6 +77,8 @@ class _HomeScreenState extends State<HomeScreen> {
         },
         child: Scaffold(
             appBar: AppBar(
+              automaticallyImplyLeading: false,
+              backgroundColor: APIs.purple,
               title: _isSearching
                   ? TextField(
                       decoration: const InputDecoration(
@@ -103,20 +106,23 @@ class _HomeScreenState extends State<HomeScreen> {
                         }
                       },
                     )
-                  : const Text('Chatters'),
-              leading: const Icon(
-                CupertinoIcons.home,
-              ),
+                  : Text(
+                      'BrieF Chat',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: APIs.yellow),
+                    ),
               actions: [
                 IconButton(
-                    onPressed: () {
-                      setState(() {
-                        _isSearching = !_isSearching;
-                      });
-                    },
-                    icon: Icon(_isSearching
-                        ? CupertinoIcons.clear_circled_solid
-                        : Icons.search)),
+                  onPressed: () {
+                    setState(() {
+                      _isSearching = !_isSearching;
+                    });
+                  },
+                  icon: Icon(_isSearching
+                      ? CupertinoIcons.clear_circled_solid
+                      : Icons.search),
+                  color: APIs.orange,
+                ),
                 IconButton(
                   onPressed: () {
                     Navigator.push(
@@ -126,90 +132,176 @@ class _HomeScreenState extends State<HomeScreen> {
                                 user: APIs.me,
                                 userRepository: widget.userRepository)));
                   },
-                  icon: const Icon(Icons.more_vert),
-                  color: Colors.black,
+                  icon: const Icon(Icons.person_2_rounded),
+                  color: APIs.orange,
                 )
               ],
             ),
             floatingActionButton: Padding(
               padding: const EdgeInsets.only(bottom: 10.0),
               child: FloatingActionButton(
-                onPressed: () async {
-                  // await APIs.auth.signOut();
-                  // await GoogleSignIn().signOut();
+                backgroundColor: APIs.orange,
+                onPressed: () {
+                  _addChatUser();
                 },
                 child: const Icon(Icons.add_comment_rounded),
               ),
             ),
-            body: BlocBuilder(
-              bloc: _userBloc,
-              builder: (_, UserState state) {
-                if (state is UserEmpty) {
-                  return const Center(child: Text('Empty state'));
-                }
-                if (state is UserLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                if (state is UserLoaded) {
-                  return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                    stream: state.user(),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        _userList = snapshot.data!.docs
-                            .map((doc) => Cuser.fromJson(doc.data()))
-                            .toList();
+            body: Stack(
+              children: [
+                // Background image with low alpha opacity
+                Positioned.fill(
+                  child: Opacity(
+                    opacity: 0.2, // Adjust the opacity as needed
+                    child: Image.asset(
+                      "assets/images/trans_logo.png", // Replace with your image path
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
+                BlocBuilder(
+                  bloc: _userBloc,
+                  builder: (_, UserState state) {
+                    if (state is UserEmpty) {
+                      return const Center(child: Text('Empty state'));
+                    }
+                    if (state is UserLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    if (state is UserLoaded) {
+                      return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                        stream: state.user(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            _userList = snapshot.data!.docs
+                                .map((doc) => Cuser.fromJson(doc.data()))
+                                .toList();
 
-                        if (_userList.isEmpty) {
-                          // Handle empty list
-                          return const Center(
-                            child: Text(
-                              "No Users Available",
-                              style: TextStyle(fontSize: 30),
-                            ),
-                          );
-                        }
+                            if (_userList.isEmpty) {
+                              // Handle empty list
+                              return const Center(
+                                child: Text(
+                                  "No Users Available",
+                                  style: TextStyle(fontSize: 30),
+                                ),
+                              );
+                            }
 
-                        return ListView.builder(
-                          itemCount: _isSearching
-                              ? _searchList.length
-                              : _userList.length,
-                          padding: EdgeInsets.only(
-                            top: MediaQuery.of(context).size.height * .01,
-                          ),
-                          physics: const BouncingScrollPhysics(),
-                          itemBuilder: (context, index) {
-                            return ChatterCard(
-                              user: _isSearching
-                                  ? _searchList[index]
-                                  : _userList[index],
+                            return ListView.builder(
+                              itemCount: _isSearching
+                                  ? _searchList.length
+                                  : _userList.length,
+                              padding: EdgeInsets.only(
+                                top: MediaQuery.of(context).size.height * .01,
+                              ),
+                              physics: const BouncingScrollPhysics(),
+                              itemBuilder: (context, index) {
+                                return ChatterCard(
+                                  user: _isSearching
+                                      ? _searchList[index]
+                                      : _userList[index],
+                                );
+                              },
                             );
-                          },
-                        );
-                      } else if (snapshot.hasError) {
-                        // Handle error state
-                        return Center(
-                          child: Text(
-                            "Error: ${snapshot.error}",
-                            style: TextStyle(fontSize: 18),
-                          ),
-                        );
-                      } else {
-                        // Handle initial loading state
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                    },
-                  );
-                }
-                if (state is UserError) {
-                  return const Text(
-                    'Something went wrong!',
-                    style: TextStyle(color: Colors.red),
-                  );
-                }
-                return const SizedBox();
-              },
+                          } else if (snapshot.hasError) {
+                            // Handle error state
+                            return Center(
+                              child: Text(
+                                "Error: ${snapshot.error}",
+                                style: TextStyle(fontSize: 18),
+                              ),
+                            );
+                          } else {
+                            // Handle initial loading state
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          }
+                        },
+                      );
+                    }
+                    if (state is UserError) {
+                      return const Text(
+                        'Something went wrong!',
+                        style: TextStyle(color: Colors.red),
+                      );
+                    }
+                    return const SizedBox();
+                  },
+                )
+              ],
             )),
       ),
     );
+  }
+
+  void _addChatUser() {
+    String email = '';
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            contentPadding:
+                const EdgeInsets.only(left: 24, right: 24, top: 20, bottom: 10),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            //title
+            title: Row(
+              children: [
+                Icon(
+                  Icons.person_2_outlined,
+                  color: APIs.orange,
+                  size: 28,
+                ),
+                const Text(' Add User')
+              ],
+            ),
+
+            //content
+            content: TextFormField(
+              maxLines: null,
+              onChanged: (value) => email = value,
+              decoration: InputDecoration(
+                  hintText: 'Email ID',
+                  prefixIcon: Icon(
+                    Icons.email_outlined,
+                    color: APIs.orange,
+                  ),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15))),
+            ),
+
+            //actions
+            actions: [
+              //cancel button
+              MaterialButton(
+                  onPressed: () {
+                    //hide alert dialog
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    'Cancel',
+                    style: TextStyle(color: APIs.orange, fontSize: 16),
+                  )),
+
+              //update button
+              MaterialButton(
+                  onPressed: () async {
+                    //hide alert dialog
+                    Navigator.pop(context);
+                    if (email.isNotEmpty) {
+                      await APIs.addChatterExists(email).then((value) {
+                        if (!value) {
+                          Dialogs.showSnackBar(context, "User does not exist");
+                        }
+                      });
+                    }
+                  },
+                  child: Text(
+                    'Add',
+                    style: TextStyle(color: APIs.orange, fontSize: 16),
+                  ))
+            ],
+          );
+        });
   }
 }

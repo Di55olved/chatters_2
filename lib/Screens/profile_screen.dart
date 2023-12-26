@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:chatters_2/API/api.dart';
 import 'package:chatters_2/Models/user.dart';
 import 'package:chatters_2/Screens/auth/sign_in.dart';
+import 'package:chatters_2/Screens/home_screen.dart';
 import 'package:chatters_2/core/repository/user_repo.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -31,26 +32,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("Profile Screen"),
+          leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: const Icon(Icons.arrow_back),
+            color: APIs.orange,
+          ),
+          backgroundColor: APIs.purple,
+          title: Text(
+            "Profile Screen",
+            style: TextStyle(color: APIs.yellow),
+          ),
           // leading: const Icon(
           //   CupertinoIcons.home,
           // ),
-          actions: [
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.search),
-              color: Colors.black,
-            ),
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.more_vert),
-              color: Colors.black,
-            )
-          ],
         ),
         floatingActionButton: Padding(
           padding: const EdgeInsets.only(bottom: 10.0),
           child: FloatingActionButton.extended(
+            backgroundColor: APIs.orange,
             onPressed: () async {
               Dialogs.showProgressBar(context);
 
@@ -110,8 +111,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 fit: BoxFit.cover,
                                 imageUrl: widget.user.image!,
                                 errorWidget: (context, url, error) =>
-                                    const CircleAvatar(
-                                        child: Icon(CupertinoIcons.person)),
+                                    CircleAvatar(
+                                        child: Icon(
+                                  CupertinoIcons.person,
+                                  color: APIs.orange,
+                                )),
                               ),
                             ),
                       Positioned(
@@ -124,9 +128,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           },
                           shape: const CircleBorder(),
                           color: Colors.white,
-                          child: const Icon(
+                          child: Icon(
                             Icons.edit,
-                            color: Colors.blue,
+                            color: APIs.orange,
                           ),
                         ),
                       )
@@ -149,7 +153,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       val != null && val.isNotEmpty ? null : 'Required Field',
                   initialValue: widget.user.name,
                   decoration: InputDecoration(
-                      prefixIcon: const Icon(Icons.person, color: Colors.blue),
+                      prefixIcon: Icon(Icons.person, color: APIs.orange),
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12)),
                       hintText: 'eg. Happy Singh',
@@ -164,7 +168,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   validator: (val) =>
                       val != null && val.isNotEmpty ? null : 'Required Field',
                   decoration: InputDecoration(
-                      prefixIcon: const Icon(Icons.person, color: Colors.blue),
+                      prefixIcon: Icon(Icons.person, color: APIs.orange),
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12)),
                       hintText: 'eg.Academic',
@@ -177,7 +181,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   style: ElevatedButton.styleFrom(
                       shape: const StadiumBorder(),
                       minimumSize: Size(MediaQuery.sizeOf(context).width * .5,
-                          MediaQuery.sizeOf(context).height * 0.06)),
+                          MediaQuery.sizeOf(context).height * 0.06),
+                      backgroundColor: APIs.orange),
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       _formKey.currentState!.save();

@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:chatters_2/Models/messages.dart';
 import 'package:chatters_2/Models/user.dart';
+import 'package:chatters_2/core/network.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -89,6 +90,41 @@ class APIs extends ChangeNotifier {
             .doc(auth.currentUser!.uid)
             .get())
         .exists;
+  }
+
+  // checking if my_user already exits
+
+  static Future<bool> addChatterExists(String email) async {
+    try {
+      // Query the users collection for the given email
+      final querySnapshot = await firestore
+          .collection("users")
+          .where('email', isEqualTo: email)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        final userData = querySnapshot.docs.first.data();
+        final userId = querySnapshot.docs.first.id;
+
+        // Check if the user is not the current user
+        if (userId != auth.currentUser!.uid) {
+          // Set the user data in the "my_users" subcollection
+          await firestore
+              .collection('users')
+              .doc(auth.currentUser!.uid)
+              .collection("my_users")
+              .doc(userId)
+              .set(userData);
+
+          return true;
+        }
+      }
+
+      return false;
+    } catch (error) {
+      print("Error adding chatter: $error");
+      return false;
+    }
   }
 
   static Future<void> getSelfInfo() async {

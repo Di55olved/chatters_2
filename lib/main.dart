@@ -47,26 +47,7 @@ Future<void> _initializeFiebase() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key, required this.userRepository});
   final UserRepository userRepository;
-  // This widget is the root of your application.
-  // @override
-  // Widget build(BuildContext context) {
-  //   return MaterialApp(
-  //     debugShowCheckedModeBanner: false,
-  //       title: 'Chatter',
-  //       theme: ThemeData(
-  //         useMaterial3: false,
-  //         appBarTheme: const AppBarTheme(
-  //             centerTitle: true,
-  //             elevation: 1,
-  //             titleTextStyle: TextStyle(
-  //                 color: Colors.black,
-  //                 fontWeight: FontWeight.normal,
-  //                 fontSize: 19),
-  //             backgroundColor: Colors.white,
-  //             iconTheme: IconThemeData(color: Colors.black)),
-  //       ),
-  //       home:  SplashScreen(userRepository: userRepository,));
-  // }
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -74,16 +55,14 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => obj),
       ],
       child: MaterialApp(
-          title: 'Chatter',
+          title: 'BrieF Chat',
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
             useMaterial3: false,
             appBarTheme: const AppBarTheme(
                 centerTitle: true,
                 elevation: 1,
-                titleTextStyle: TextStyle(
-                    color: Colors.black,
-                    fontSize: 19),
+                titleTextStyle: TextStyle(color: Colors.black, fontSize: 19),
                 backgroundColor: Colors.white,
                 iconTheme: IconThemeData(color: Colors.black)),
           ),

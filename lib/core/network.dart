@@ -1,4 +1,3 @@
-
 import 'package:chatters_2/Models/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -12,7 +11,7 @@ class UserApiClient {
 
   // for accessing cloud firestore database
   static FirebaseFirestore firestore = FirebaseFirestore.instance;
-  
+
   static FirebaseStorage storage = FirebaseStorage.instance;
 
   static late Cuser me;
@@ -21,8 +20,25 @@ class UserApiClient {
   UserApiClient({required this.httpClient});
 
   Stream<QuerySnapshot<Map<String, dynamic>>> getAllUsers() {
-    return firestore.collection("users").snapshots();
+    return firestore
+        .collection("users")
+        .doc(auth.currentUser!.uid)
+        .collection("my_users")
+        .snapshots();
   }
+ static Future<void> copyUserDataToMyUsers(String uid) async {
+    DocumentReference userDocRef = FirebaseFirestore.instance
+        .collection("users")
+        .doc(uid);
+    DocumentSnapshot userSnapshot = await userDocRef.get();
+    Map<String, dynamic>? userData =
+        userSnapshot.data() as Map<String, dynamic>?;
+    CollectionReference myUsersCollectionRef =
+        userDocRef.collection("my_users");
+    await myUsersCollectionRef.add(userData);
+  }
+
+  
 
   // Stream<QuerySnapshot<Map<String, dynamic>>> fetchUserMoc() {
   //   // Simulating the conversion of List<Cuser> to a Stream<QuerySnapshot>
@@ -53,7 +69,6 @@ class UserApiClient {
   //     QuerySnapshotMetadata(hasPendingWrites: false), // Add metadata as needed
   //   )]);
   // }
-
 }
 
 class Endpoints {
