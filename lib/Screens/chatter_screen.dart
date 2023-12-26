@@ -50,6 +50,14 @@ class _ChatterScreenState extends State<ChatterScreen> {
             appBar: AppBar(
               automaticallyImplyLeading: false,
               flexibleSpace: _appBar(),
+              backgroundColor: APIs.purple,
+              leading: IconButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: const Icon(Icons.arrow_back),
+                color: APIs.orange,
+              ),
             ),
             body: Column(
               children: [
@@ -158,7 +166,8 @@ class _ChatterScreenState extends State<ChatterScreen> {
 
                   //user profile picture
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(MediaQuery.sizeOf(context).height * .03),
+                    borderRadius: BorderRadius.circular(
+                        MediaQuery.sizeOf(context).height * .03),
                     child: CachedNetworkImage(
                       width: MediaQuery.sizeOf(context).height * .05,
                       height: MediaQuery.sizeOf(context).height * .05,
@@ -178,10 +187,11 @@ class _ChatterScreenState extends State<ChatterScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       //user name
-                      Text('${list.isNotEmpty ? list[0].name : widget.user.name}',
+                      Text(
+                          '${list.isNotEmpty ? list[0].name : widget.user.name}',
                           style: const TextStyle(
                               fontSize: 16,
-                              color: Colors.black87,
+                              color: Colors.white,
                               fontWeight: FontWeight.w500)),
 
                       //for adding some space
@@ -199,13 +209,14 @@ class _ChatterScreenState extends State<ChatterScreen> {
                                   context: context,
                                   lastActive: widget.user.lastActive!),
                           style: const TextStyle(
-                              fontSize: 13, color: Colors.black54)),
+                              fontSize: 13, color: Colors.white)),
                     ],
                   )
                 ],
               );
             }));
   }
+
   Widget _chatInput() {
     return Padding(
       padding: EdgeInsets.symmetric(
@@ -225,8 +236,8 @@ class _ChatterScreenState extends State<ChatterScreen> {
                         FocusScope.of(context).unfocus();
                         setState(() => _showEmoji = !_showEmoji);
                       },
-                      icon: const Icon(Icons.emoji_emotions,
-                          color: Colors.blueAccent, size: 26)),
+                      icon: Icon(Icons.emoji_emotions,
+                          color: APIs.orange, size: 26)),
                   Expanded(
                       child: TextField(
                     controller: _textController,
@@ -235,9 +246,9 @@ class _ChatterScreenState extends State<ChatterScreen> {
                       if (_showEmoji) setState(() => _showEmoji = !_showEmoji);
                     },
                     maxLines: null,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                         hintText: 'Type Something...',
-                        hintStyle: TextStyle(color: Colors.blueAccent),
+                        hintStyle: TextStyle(color: APIs.orange),
                         border: InputBorder.none),
                   )),
                   IconButton(
@@ -258,8 +269,7 @@ class _ChatterScreenState extends State<ChatterScreen> {
                           });
                         }
                       },
-                      icon: const Icon(Icons.image,
-                          color: Colors.blueAccent, size: 26)),
+                      icon: Icon(Icons.image, color: APIs.orange, size: 26)),
                   IconButton(
                       onPressed: () async {
                         final ImagePicker picker = ImagePicker();
@@ -282,8 +292,8 @@ class _ChatterScreenState extends State<ChatterScreen> {
                           //   Navigator.pop(context);
                         }
                       },
-                      icon: const Icon(Icons.camera_alt_rounded,
-                          color: Colors.blueAccent, size: 26)),
+                      icon: Icon(Icons.camera_alt_rounded,
+                          color: APIs.orange, size: 26)),
                 ],
               ),
             ),
@@ -299,7 +309,7 @@ class _ChatterScreenState extends State<ChatterScreen> {
             padding:
                 const EdgeInsets.only(top: 10, bottom: 10, right: 5, left: 10),
             shape: const CircleBorder(),
-            color: Colors.green,
+            color: APIs.yellow,
             child: const Icon(Icons.send, color: Colors.white, size: 28),
           )
         ],

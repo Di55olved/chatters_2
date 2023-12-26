@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:chatters_2/API/api.dart';
 import 'package:chatters_2/Models/user.dart';
 import 'package:chatters_2/Screens/auth/sign_in.dart';
-import 'package:chatters_2/Screens/home_screen.dart';
 import 'package:chatters_2/core/repository/user_repo.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

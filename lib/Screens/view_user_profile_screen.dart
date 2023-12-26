@@ -1,9 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chatters_2/API/api.dart';
 import 'package:chatters_2/Models/user.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart'; // Import the intl package
-
 
 //view profile screen -- to view profile of user
 class ViewProfileScreen extends StatefulWidget {
@@ -23,7 +23,20 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
           //app bar
-          appBar: AppBar(title: Text(widget.user.name!)),
+          appBar: AppBar(
+            title: Text(
+              widget.user.name!,
+              style: const TextStyle(color: Colors.white),
+            ),
+            backgroundColor: APIs.purple,
+            leading: IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: const Icon(Icons.arrow_back),
+              color: APIs.orange,
+            ),
+          ),
           floatingActionButton: //user about
               Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -35,25 +48,30 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
                     fontWeight: FontWeight.w500,
                     fontSize: 15),
               ),
-Text(
-  DateFormat('yyyy-MM-dd').format(DateTime.parse(widget.user.createdAt!)),
-  style: const TextStyle(color: Colors.black54, fontSize: 15),
-),
+              Text(
+                DateFormat('yyyy-MM-dd')
+                    .format(DateTime.parse(widget.user.createdAt!)),
+                style: const TextStyle(color: Colors.black54, fontSize: 15),
+              ),
             ],
           ),
 
           //body
           body: Padding(
-            padding: EdgeInsets.symmetric(horizontal: MediaQuery.sizeOf(context).width * .05),
+            padding: EdgeInsets.symmetric(
+                horizontal: MediaQuery.sizeOf(context).width * .05),
             child: SingleChildScrollView(
               child: Column(
                 children: [
                   // for adding some space
-                  SizedBox(width: MediaQuery.sizeOf(context).width, height: MediaQuery.sizeOf(context).height * .03),
+                  SizedBox(
+                      width: MediaQuery.sizeOf(context).width,
+                      height: MediaQuery.sizeOf(context).height * .03),
 
                   //user profile picture
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(MediaQuery.sizeOf(context).height * .1),
+                    borderRadius: BorderRadius.circular(
+                        MediaQuery.sizeOf(context).height * .1),
                     child: CachedNetworkImage(
                       width: MediaQuery.sizeOf(context).height * .2,
                       height: MediaQuery.sizeOf(context).height * .2,
