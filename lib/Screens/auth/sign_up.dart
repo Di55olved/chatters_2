@@ -1,7 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 import 'package:chatters_2/API/api.dart';
 import 'package:chatters_2/Navigaitions/routes_names.dart';
-import 'package:chatters_2/Screens/auth/otp.dart';
 import 'package:chatters_2/Screens/auth/sign_in.dart';
 import 'package:chatters_2/Widgets/my_assets.dart';
 import 'package:chatters_2/core/repository/user_repo.dart';

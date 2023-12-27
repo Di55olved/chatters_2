@@ -7,7 +7,6 @@ import "package:email_otp/email_otp.dart";
 import "package:flutter/material.dart";
 
 import "package:chatters_2/API/api.dart";
-import "package:chatters_2/Screens/home_screen.dart";
 import "package:chatters_2/Widgets/my_assets.dart";
 import "package:go_router/go_router.dart";
 

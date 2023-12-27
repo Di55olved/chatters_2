@@ -4,7 +4,6 @@ import 'package:chatters_2/API/api.dart';
 import 'package:chatters_2/Models/messages.dart';
 import 'package:chatters_2/Models/user.dart';
 import 'package:chatters_2/Navigaitions/routes_names.dart';
-import 'package:chatters_2/Screens/view_user_profile_screen.dart';
 import 'package:chatters_2/Support/data_utils.dart';
 import 'package:chatters_2/Widgets/messages.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';

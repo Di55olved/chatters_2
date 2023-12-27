@@ -2,7 +2,6 @@ import 'dart:developer';
 import 'package:chatters_2/API/api.dart';
 import 'package:chatters_2/Navigaitions/routes_names.dart';
 import 'package:chatters_2/Screens/auth/sign_up.dart';
-import 'package:chatters_2/Screens/home_screen.dart';
 import 'package:chatters_2/Widgets/my_assets.dart';
 import 'package:chatters_2/core/repository/user_repo.dart';
 import 'package:firebase_auth/firebase_auth.dart';

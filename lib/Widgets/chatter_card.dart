@@ -2,7 +2,6 @@ import 'package:chatters_2/API/api.dart';
 import 'package:chatters_2/Models/messages.dart';
 import 'package:chatters_2/Models/user.dart';
 import 'package:chatters_2/Navigaitions/routes_names.dart';
-import 'package:chatters_2/Screens/chatter_screen.dart';
 import 'package:chatters_2/Support/data_utils.dart';
 import 'package:chatters_2/Widgets/profile_dialog.dart';
 import 'package:flutter/cupertino.dart';
