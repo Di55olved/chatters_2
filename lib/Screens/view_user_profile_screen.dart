@@ -1,8 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatters_2/API/api.dart';
 import 'package:chatters_2/Models/user.dart';
+import 'package:chatters_2/Navigaitions/routes_names.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart'; // Import the intl package
 
 //view profile screen -- to view profile of user
@@ -31,7 +33,7 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
             backgroundColor: APIs.purple,
             leading: IconButton(
               onPressed: () {
-                Navigator.pop(context);
+                context.goNamed(RouteNames.chatterScreen, extra: widget.user);
               },
               icon: const Icon(Icons.arrow_back),
               color: APIs.orange,

@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:chatters_2/API/api.dart';
 import 'package:chatters_2/Models/user.dart';
-import 'package:chatters_2/Screens/profile_screen.dart';
+import 'package:chatters_2/Navigaitions/routes_names.dart';
 import 'package:chatters_2/Support/dialogs.dart';
 import 'package:chatters_2/Widgets/chatter_card.dart';
 import 'package:chatters_2/Widgets/my_assets.dart';
@@ -15,6 +15,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class HomeScreen extends StatefulWidget {
   final UserRepository userRepository;
@@ -126,12 +127,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 IconButton(
                   onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => ProfileScreen(
-                                user: APIs.me,
-                                userRepository: widget.userRepository)));
+                    context.goNamed(
+                      RouteNames.profileScreen,
+                      extra: APIs.me,
+                    );
                   },
                   icon: const Icon(Icons.person_2_rounded),
                   color: APIs.orange,
@@ -153,7 +152,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 // Background image with low alpha opacity
                 Positioned.fill(
                   child: Opacity(
-                    opacity: 0.2, 
+                    opacity: 0.2,
                     child: MyAssets.transLogo,
                   ),
                 ),

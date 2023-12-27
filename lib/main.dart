@@ -1,25 +1,29 @@
-import 'package:chatters_2/API/api.dart';
-import 'package:chatters_2/Screens/splash_screen.dart';
-import 'package:chatters_2/core/network.dart';
-import 'package:chatters_2/core/repository/user_repo.dart';
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:chatters_2/Navigaitions/my_navigations.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_notification_channel/flutter_notification_channel.dart';
 import 'package:flutter_notification_channel/notification_importance.dart';
-import 'package:provider/provider.dart';
-import 'firebase_options.dart';
+import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
+import 'package:chatters_2/API/api.dart';
+import 'package:chatters_2/core/network.dart';
+import 'package:chatters_2/core/repository/user_repo.dart';
+import 'firebase_options.dart';
 
 APIs obj = APIs();
-
+UserRepository userRepository = UserRepository(
+  userApiClient: UserApiClient(
+    httpClient: http.Client(),
+  ),
+);
 void main() async {
-  final UserRepository userRepository = UserRepository(
-    userApiClient: UserApiClient(
-      httpClient: http.Client(),
-    ),
-  );
+  // Initialzie Navigation
+  MyRouter router = MyRouter();
 
+  // All the main stuff
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   SystemChrome.setPreferredOrientations(
@@ -27,6 +31,7 @@ void main() async {
   await _initializeFiebase();
   runApp(MyApp(
     userRepository: userRepository,
+    router: router.router,
   ));
 }
 
@@ -45,16 +50,21 @@ Future<void> _initializeFiebase() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key, required this.userRepository});
+  const MyApp({
+    super.key,
+    required this.userRepository,
+    required this.router,
+  });
   final UserRepository userRepository;
+  final GoRouter router;
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (context) => obj),
-      ],
-      child: MaterialApp(
+        providers: [
+          ChangeNotifierProvider(create: (context) => obj),
+        ],
+        child: MaterialApp.router(
           title: 'BrieF Chat',
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
@@ -66,9 +76,7 @@ class MyApp extends StatelessWidget {
                 backgroundColor: Colors.white,
                 iconTheme: IconThemeData(color: Colors.black)),
           ),
-          home: SplashScreen(
-            userRepository: userRepository,
-          )),
-    );
+          routerConfig: router,
+        ));
   }
 }

@@ -1,16 +1,15 @@
 //import 'package:flutter/cupertino.dart';
 import 'dart:developer';
 import 'package:chatters_2/API/api.dart';
-import 'package:chatters_2/Screens/auth/sign_in.dart';
-import 'package:chatters_2/Screens/home_screen.dart';
+import 'package:chatters_2/Navigaitions/routes_names.dart';
 import 'package:chatters_2/Widgets/my_assets.dart';
 import 'package:chatters_2/core/repository/user_repo.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class SplashScreen extends StatefulWidget {
-  final UserRepository userRepository;
-  const SplashScreen({Key? key, required this.userRepository})
-      : super(key: key);
+  final UserRepository? userRepository;
+  const SplashScreen({super.key, required this.userRepository});
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -23,19 +22,9 @@ class _SplashScreenState extends State<SplashScreen> {
     Future.delayed(const Duration(milliseconds: 2000), () {
       if (APIs.auth.currentUser != null) {
         log("User: ${APIs.auth.currentUser}");
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (_) => HomeScreen(userRepository: widget.userRepository),
-          ),
-        );
+        context.goNamed(RouteNames.homeScreen);
       } else {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (_) =>
-                  SignInPage(userRepository: widget.userRepository)),
-        );
+        context.goNamed(RouteNames.signIn);
       }
     });
   }

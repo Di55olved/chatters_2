@@ -1,12 +1,14 @@
 import 'package:chatters_2/API/api.dart';
 import 'package:chatters_2/Models/messages.dart';
 import 'package:chatters_2/Models/user.dart';
+import 'package:chatters_2/Navigaitions/routes_names.dart';
 import 'package:chatters_2/Screens/chatter_screen.dart';
 import 'package:chatters_2/Support/data_utils.dart';
 import 'package:chatters_2/Widgets/profile_dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:go_router/go_router.dart';
 
 class ChatterCard extends StatefulWidget {
   final Cuser user;
@@ -29,10 +31,7 @@ class _ChatterCardState extends State<ChatterCard> {
       //    color: Colors.lightBlue[100],
       child: InkWell(
           onTap: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (_) => ChatterScreen(user: widget.user)));
+            context.goNamed(RouteNames.chatterScreen, extra: widget.user);
           },
           child: StreamBuilder(
             //get latest message

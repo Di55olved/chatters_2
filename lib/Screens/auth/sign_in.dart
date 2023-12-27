@@ -1,11 +1,13 @@
 import 'dart:developer';
 import 'package:chatters_2/API/api.dart';
+import 'package:chatters_2/Navigaitions/routes_names.dart';
 import 'package:chatters_2/Screens/auth/sign_up.dart';
 import 'package:chatters_2/Screens/home_screen.dart';
 import 'package:chatters_2/Widgets/my_assets.dart';
 import 'package:chatters_2/core/repository/user_repo.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 Color purple = const Color.fromARGB(255, 47, 24, 71);
@@ -26,7 +28,7 @@ class _SignInPageState extends State<SignInPage> {
   //Password Controller and Value
   TextEditingController passController = TextEditingController();
   String passValue = '';
-  
+
   @override
   Widget build(BuildContext context) {
     return Consumer<APIs>(
@@ -129,12 +131,9 @@ class _SignInPageState extends State<SignInPage> {
                             await APIs.auth.signInWithEmailAndPassword(
                                 email: emailValue, password: passValue);
                             //Navigate to HomeScreen if Sign In was successful
-                            Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                                builder: (context) => HomeScreen(
-                                    userRepository: widget.userRepository),
-                              ),
-                            );
+                            // ignore: use_build_context_synchronously
+                            context.goNamed(RouteNames.homeScreen,
+                                extra: widget.userRepository);
                             //Display the exceptions
                           } on FirebaseAuthException catch (e) {
                             ScaffoldMessenger.of(context).showSnackBar(
@@ -185,11 +184,7 @@ class _SignInPageState extends State<SignInPage> {
                         ),
                         InkWell(
                           onTap: () {
-                            Navigator.of(context)
-                                .pushReplacement(MaterialPageRoute(
-                                    builder: (context) => SignUpPage(
-                                          userRepository: widget.userRepository,
-                                        )));
+                            context.goNamed(RouteNames.signUp, extra: widget.userRepository);
                           },
                           child: Text(
                             "Sign Up",

@@ -3,12 +3,14 @@
 import 'dart:io';
 import 'package:chatters_2/API/api.dart';
 import 'package:chatters_2/Models/user.dart';
+import 'package:chatters_2/Navigaitions/routes_names.dart';
 import 'package:chatters_2/Screens/auth/sign_in.dart';
 import 'package:chatters_2/Widgets/my_assets.dart';
 import 'package:chatters_2/core/repository/user_repo.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../Support/dialogs.dart';
@@ -34,7 +36,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         appBar: AppBar(
           leading: IconButton(
             onPressed: () {
-              Navigator.pop(context);
+              context.goNamed(RouteNames.homeScreen);
             },
             icon: const Icon(Icons.arrow_back),
             color: APIs.orange,
@@ -58,11 +60,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               await APIs.updateActiveStatus(false);
 
               await APIs.auth.signOut();
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          SignInPage(userRepository: widget.userRepository)));
+              context.goNamed(RouteNames.signIn);
             },
             icon: const Icon(Icons.logout),
             label: const Text('Logout'),

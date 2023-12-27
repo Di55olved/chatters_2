@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first, must_be_immutable, use_build_context_synchronously
 import "dart:async";
 
+import "package:chatters_2/Navigaitions/routes_names.dart";
 import "package:chatters_2/core/repository/user_repo.dart";
 import "package:email_otp/email_otp.dart";
 import "package:flutter/material.dart";
@@ -8,11 +9,12 @@ import "package:flutter/material.dart";
 import "package:chatters_2/API/api.dart";
 import "package:chatters_2/Screens/home_screen.dart";
 import "package:chatters_2/Widgets/my_assets.dart";
+import "package:go_router/go_router.dart";
 
 class OTPHandler extends StatefulWidget {
   final UserRepository userRepository;
   final String name;
-  final String imgaeURL;
+  final String imageURL;
   final String email;
   final String pass;
   final String confPass;
@@ -23,7 +25,7 @@ class OTPHandler extends StatefulWidget {
     super.key,
     required this.userRepository,
     required this.name,
-    required this.imgaeURL,
+    required this.imageURL,
     required this.email,
     required this.pass,
     required this.confPass,
@@ -34,7 +36,6 @@ class OTPHandler extends StatefulWidget {
 }
 
 class _OTPHandlerState extends State<OTPHandler> {
- 
   //OTP controller and Value
   TextEditingController otpController = TextEditingController();
   String otpValue = '';
@@ -112,11 +113,9 @@ class _OTPHandlerState extends State<OTPHandler> {
                           await APIs.auth.createUserWithEmailAndPassword(
                               email: widget.email, password: widget.pass);
                           await APIs.createChatter(
-                              name: widget.name, imageURL: widget.imgaeURL);
-                          Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                                  builder: (context) => HomeScreen(
-                                      userRepository: widget.userRepository)));
+                              name: widget.name, imageURL: widget.imageURL);
+                         context.goNamed(RouteNames.homeScreen,
+                                extra: widget.userRepository);
                         } else {
                           ScaffoldMessenger.of(context)
                               .showSnackBar(const SnackBar(

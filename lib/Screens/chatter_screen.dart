@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:chatters_2/API/api.dart';
 import 'package:chatters_2/Models/messages.dart';
 import 'package:chatters_2/Models/user.dart';
+import 'package:chatters_2/Navigaitions/routes_names.dart';
 import 'package:chatters_2/Screens/view_user_profile_screen.dart';
 import 'package:chatters_2/Support/data_utils.dart';
 import 'package:chatters_2/Widgets/messages.dart';
@@ -11,6 +12,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ChatterScreen extends StatefulWidget {
@@ -53,7 +55,7 @@ class _ChatterScreenState extends State<ChatterScreen> {
               backgroundColor: APIs.purple,
               leading: IconButton(
                 onPressed: () {
-                  Navigator.pop(context);
+                  context.goNamed(RouteNames.homeScreen);
                 },
                 icon: const Icon(Icons.arrow_back),
                 color: APIs.orange,
@@ -144,10 +146,7 @@ class _ChatterScreenState extends State<ChatterScreen> {
   Widget _appBar() {
     return InkWell(
         onTap: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (_) => ViewProfileScreen(user: widget.user)));
+          context.goNamed(RouteNames.viewUserProfileScreen, extra: widget.user);
         },
         child: StreamBuilder(
             stream: APIs.getUserInfo(widget.user),

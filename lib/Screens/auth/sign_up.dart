@@ -1,11 +1,14 @@
 // ignore_for_file: use_build_context_synchronously
 import 'package:chatters_2/API/api.dart';
+import 'package:chatters_2/Navigaitions/routes_names.dart';
 import 'package:chatters_2/Screens/auth/otp.dart';
 import 'package:chatters_2/Screens/auth/sign_in.dart';
 import 'package:chatters_2/Widgets/my_assets.dart';
 import 'package:chatters_2/core/repository/user_repo.dart';
+import 'package:chatters_2/main.dart';
 import 'package:email_otp/email_otp.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class SignUpPage extends StatefulWidget {
   final UserRepository userRepository;
@@ -86,10 +89,7 @@ class _SignUpPageState extends State<SignUpPage> {
                               borderSide: BorderSide(color: APIs.orange))),
                     ),
                     ElevatedButton(
-                        onPressed: () async {
-                          
-                        },
-                        child: const Text("Submit")),
+                        onPressed: () async {}, child: const Text("Submit")),
                   ],
                 ),
               )
@@ -289,16 +289,25 @@ class _SignUpPageState extends State<SignUpPage> {
                             if ((passValue == confPassValue) &&
                                 (passValue != '') &&
                                 (confPassValue != '')) {
-                              Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => OTPHandler(
-                                            name: nameValue,
-                                            imgaeURL: imageURLValue,
-                                            email: emailValue,
-                                            pass: passValue,
-                                            confPass: confPassValue, userRepository: widget.userRepository,
-                                          )));
+                              // Navigator.pushReplacement(
+                              //     context,
+                              //     MaterialPageRoute(
+                              //         builder: (context) => OTPHandler(
+                              // {'name': nameValue,
+                              // 'imgaeURL': imageURLValue,
+                              // 'email': emailValue,
+                              // 'pass': passValue,
+                              // 'confPass': confPassValue, userRepository: widget.userRepository},
+                              //             )));
+                              context.goNamed(RouteNames.otp,
+                                  queryParameters: {
+                                    'name': nameValue,
+                                    'imageURL': imageURLValue,
+                                    'email': emailValue,
+                                    'pass': passValue,
+                                    'confPass': confPassValue
+                                  },
+                                  extra: userRepository);
                             } else {
                               ScaffoldMessenger.of(context)
                                   .showSnackBar(const SnackBar(
