@@ -1,8 +1,8 @@
 // ignore_for_file: use_build_context_synchronously
-
-import 'dart:developer';
 import 'package:chatters_2/API/api.dart';
+import 'package:chatters_2/Screens/auth/otp.dart';
 import 'package:chatters_2/Screens/auth/sign_in.dart';
+import 'package:chatters_2/Widgets/my_assets.dart';
 import 'package:chatters_2/core/repository/user_repo.dart';
 import 'package:email_otp/email_otp.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +16,10 @@ class SignUpPage extends StatefulWidget {
 
   //Function to check for email domain
   static bool verifyEmail(String emailText) {
+    if (emailText.isEmpty) {
+      return false; // Return false for empty string
+    }
+
     String valv = "khi.iba.edu.pk";
     String valv2 = "iba.edu.pk";
 
@@ -83,26 +87,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     ),
                     ElevatedButton(
                         onPressed: () async {
-                          otpValue = otpController.text;
-                          bool check = await myOTP.verifyOTP(otp: otpValue);
-
-                          if (check == true) {
-                            await APIs.auth.createUserWithEmailAndPassword(
-                                email: emailValue, password: passValue);
-                            await APIs.createChatter(
-                                name: nameValue, imageURL: imageURLValue);
-                            Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
-                                    builder: (context) => SignInPage(
-                                        userRepository:
-                                            widget.userRepository)));
-                          } else {
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(const SnackBar(
-                              content: Text("Invalid OTP, Try again"),
-                              duration: Duration(seconds: 1),
-                            ));
-                          }
+                          
                         },
                         child: const Text("Submit")),
                   ],
@@ -121,11 +106,9 @@ class _SignUpPageState extends State<SignUpPage> {
         child: ListView(
           children: [
             //iRent Logo
-            const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Image(
-                image: AssetImage('assets/images/briefChatLogo.png'),
-              ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: MyAssets.logo,
             ),
             Padding(
               padding: const EdgeInsets.all(32.0),
@@ -296,61 +279,40 @@ class _SignUpPageState extends State<SignUpPage> {
                       width: 400.0,
                       height: 50.0,
                       child: ElevatedButton(
-                        onPressed: () async {
-                          try {
-                            nameValue = nameController.text;
-                            imageURLValue = imageURLController.text;
-                            emailValue = emailController.text;
-                            passValue = passController.text;
-                            confPassValue = confPassController.text;
-
-                            if (SignUpPage.verifyEmail(emailValue)) {
-                              if (passValue == confPassValue) {
-                                myOTP.setConfig(
-                                    appEmail: "bh3082336888@gmail.com",
-                                    appName: "iRENT",
-                                    userEmail: emailValue,
-                                    otpLength: 4,
-                                    otpType: OTPType.digitsOnly);
-                                if (await myOTP.sendOTP() == true) {
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(const SnackBar(
-                                    content: Text("Otp Sent"),
-                                    duration: Duration(seconds: 2),
-                                  ));
-                                  showPopup(context);
-                                } else {
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(const SnackBar(
-                                    content:
-                                        Text("Oops, OTP failed to send, retry"),
-                                    duration: Duration(seconds: 1),
-                                  ));
-                                }
-                              } else {
-                                log("passwords don't match");
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(const SnackBar(
-                                  content: Text("Passwords don't match"),
-                                  duration: Duration(seconds: 2),
-                                ));
-                              }
+                        onPressed: () {
+                          nameValue = nameController.text;
+                          imageURLValue = imageURLController.text;
+                          emailValue = emailController.text;
+                          passValue = passController.text;
+                          confPassValue = confPassController.text;
+                          if (SignUpPage.verifyEmail(emailValue)) {
+                            if ((passValue == confPassValue) &&
+                                (passValue != '') &&
+                                (confPassValue != '')) {
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => OTPHandler(
+                                            name: nameValue,
+                                            imgaeURL: imageURLValue,
+                                            email: emailValue,
+                                            pass: passValue,
+                                            confPass: confPassValue, userRepository: widget.userRepository,
+                                          )));
                             } else {
-                              log("Email not from IBA");
                               ScaffoldMessenger.of(context)
                                   .showSnackBar(const SnackBar(
-                                content: Text("Email not from IBA"),
+                                content:
+                                    Text("Passwords Don't Match or are empty"),
                                 duration: Duration(seconds: 2),
                               ));
                             }
-                          } catch (e) {
-                            log('$e');
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content:
-                                    Text('An unexpected error occurred: $e'),
-                              ),
-                            );
+                          } else {
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(const SnackBar(
+                              content: Text("Invalid Email"),
+                              duration: Duration(seconds: 2),
+                            ));
                           }
                         },
                         style: ButtonStyle(

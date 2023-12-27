@@ -5,6 +5,7 @@ import 'package:chatters_2/Models/user.dart';
 import 'package:chatters_2/Screens/profile_screen.dart';
 import 'package:chatters_2/Support/dialogs.dart';
 import 'package:chatters_2/Widgets/chatter_card.dart';
+import 'package:chatters_2/Widgets/my_assets.dart';
 import 'package:chatters_2/bloc/user_bloc/user_bloc.dart';
 import 'package:chatters_2/bloc/user_bloc/user_events.dart';
 import 'package:chatters_2/bloc/user_bloc/user_states.dart';
@@ -152,11 +153,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 // Background image with low alpha opacity
                 Positioned.fill(
                   child: Opacity(
-                    opacity: 0.2, // Adjust the opacity as needed
-                    child: Image.asset(
-                      "assets/images/trans_logo.png", // Replace with your image path
-                      fit: BoxFit.contain,
-                    ),
+                    opacity: 0.2, 
+                    child: MyAssets.transLogo,
                   ),
                 ),
                 BlocBuilder(

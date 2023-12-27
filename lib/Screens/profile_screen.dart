@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:chatters_2/API/api.dart';
 import 'package:chatters_2/Models/user.dart';
 import 'package:chatters_2/Screens/auth/sign_in.dart';
+import 'package:chatters_2/Widgets/my_assets.dart';
 import 'package:chatters_2/core/repository/user_repo.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -258,7 +259,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Navigator.pop(context);
                         }
                       },
-                      child: Image.asset('assets/images/add_image.png')),
+                      child: MyAssets.addImage),
 
                   //take picture from camera button
                   ElevatedButton(
@@ -284,7 +285,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Navigator.pop(context);
                         }
                       },
-                      child: Image.asset('assets/images/camera.png')),
+                      child: MyAssets.camera),
                 ],
               )
             ],

@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:chatters_2/API/api.dart';
 import 'package:chatters_2/Screens/auth/sign_in.dart';
 import 'package:chatters_2/Screens/home_screen.dart';
+import 'package:chatters_2/Widgets/my_assets.dart';
 import 'package:chatters_2/core/repository/user_repo.dart';
 import 'package:flutter/material.dart';
 
@@ -50,7 +51,7 @@ class _SplashScreenState extends State<SplashScreen> {
               top: MediaQuery.of(context).size.height * .15,
               left: MediaQuery.of(context).size.width * .25,
               width: MediaQuery.of(context).size.width * .5,
-              child: Image.asset('assets/images/briefChatLogo.png'),
+              child: MyAssets.logo,
             ),
             Positioned(
               bottom: MediaQuery.of(context).size.height * .15,

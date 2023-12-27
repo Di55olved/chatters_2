@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:chatters_2/API/api.dart';
 import 'package:chatters_2/Screens/auth/sign_up.dart';
 import 'package:chatters_2/Screens/home_screen.dart';
+import 'package:chatters_2/Widgets/my_assets.dart';
 import 'package:chatters_2/core/repository/user_repo.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +26,7 @@ class _SignInPageState extends State<SignInPage> {
   //Password Controller and Value
   TextEditingController passController = TextEditingController();
   String passValue = '';
+  
   @override
   Widget build(BuildContext context) {
     return Consumer<APIs>(
@@ -34,11 +36,9 @@ class _SignInPageState extends State<SignInPage> {
           child: ListView(
             children: <Widget>[
               //iRent Logo image
-              const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Image(
-                  image: AssetImage("assets/images/briefChatLogo.png"),
-                ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: MyAssets.logo,
               ),
               Padding(
                 padding: const EdgeInsets.all(32.0),
