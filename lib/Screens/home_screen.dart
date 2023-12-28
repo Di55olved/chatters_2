@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:chatters_2/API/api.dart';
+import 'package:chatters_2/Core/repository/message_repo.dart';
 import 'package:chatters_2/Models/user.dart';
 import 'package:chatters_2/Screens/profile_screen.dart';
 import 'package:chatters_2/Support/dialogs.dart';
@@ -8,7 +9,7 @@ import 'package:chatters_2/Widgets/chatter_card.dart';
 import 'package:chatters_2/bloc/user_bloc/user_bloc.dart';
 import 'package:chatters_2/bloc/user_bloc/user_events.dart';
 import 'package:chatters_2/bloc/user_bloc/user_states.dart';
-import 'package:chatters_2/core/repository/user_repo.dart';
+import 'package:chatters_2/Core/repository/user_repo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -17,8 +18,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HomeScreen extends StatefulWidget {
   final UserRepository userRepository;
+  final MsgRepository msgRepository;
 
-  const HomeScreen({super.key, required this.userRepository});
+  const HomeScreen({super.key, required this.userRepository, required this.msgRepository});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -130,7 +132,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         MaterialPageRoute(
                             builder: (_) => ProfileScreen(
                                 user: APIs.me,
-                                userRepository: widget.userRepository)));
+                                userRepository: widget.userRepository, msgRepository: widget.msgRepository,)));
                   },
                   icon: const Icon(Icons.person_2_rounded),
                   color: APIs.orange,
@@ -199,7 +201,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 return ChatterCard(
                                   user: _isSearching
                                       ? _searchList[index]
-                                      : _userList[index],
+                                      : _userList[index], msgRepository: widget.msgRepository,
                                 );
                               },
                             );

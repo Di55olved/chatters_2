@@ -1,7 +1,10 @@
 import 'package:chatters_2/API/api.dart';
+import 'package:chatters_2/Core/message_api_client.dart';
+import 'package:chatters_2/Core/repository/message_repo.dart';
+import 'package:chatters_2/Models/user.dart';
 import 'package:chatters_2/Screens/splash_screen.dart';
-import 'package:chatters_2/core/network.dart';
-import 'package:chatters_2/core/repository/user_repo.dart';
+import 'package:chatters_2/Core/network.dart';
+import 'package:chatters_2/Core/repository/user_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -14,12 +17,19 @@ import 'package:http/http.dart' as http;
 APIs obj = APIs();
 
 void main() async {
+
   final UserRepository userRepository = UserRepository(
     userApiClient: UserApiClient(
       httpClient: http.Client(),
     ),
   );
 
+  final MsgRepository msgRepository = MsgRepository(
+    messageApiClient: MessageApiClient(
+            httpClient: http.Client(),
+    ),
+
+  );
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   SystemChrome.setPreferredOrientations(
@@ -27,6 +37,7 @@ void main() async {
   await _initializeFiebase();
   runApp(MyApp(
     userRepository: userRepository,
+    msgRepository: msgRepository,
   ));
 }
 
@@ -45,8 +56,9 @@ Future<void> _initializeFiebase() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key, required this.userRepository});
+  const MyApp({super.key, required this.userRepository, required this.msgRepository});
   final UserRepository userRepository;
+  final MsgRepository msgRepository;
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +79,7 @@ class MyApp extends StatelessWidget {
                 iconTheme: IconThemeData(color: Colors.black)),
           ),
           home: SplashScreen(
-            userRepository: userRepository,
+            userRepository: userRepository, msgRepository: msgRepository,
           )),
     );
   }

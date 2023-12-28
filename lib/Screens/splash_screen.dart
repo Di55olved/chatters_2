@@ -1,14 +1,17 @@
 //import 'package:flutter/cupertino.dart';
 import 'dart:developer';
 import 'package:chatters_2/API/api.dart';
+import 'package:chatters_2/Core/repository/message_repo.dart';
 import 'package:chatters_2/Screens/auth/sign_in.dart';
 import 'package:chatters_2/Screens/home_screen.dart';
-import 'package:chatters_2/core/repository/user_repo.dart';
+import 'package:chatters_2/Core/repository/user_repo.dart';
 import 'package:flutter/material.dart';
 
 class SplashScreen extends StatefulWidget {
   final UserRepository userRepository;
-  const SplashScreen({Key? key, required this.userRepository})
+    final MsgRepository msgRepository;
+
+  const SplashScreen({Key? key, required this.userRepository, required this.msgRepository})
       : super(key: key);
 
   @override
@@ -25,7 +28,7 @@ class _SplashScreenState extends State<SplashScreen> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (_) => HomeScreen(userRepository: widget.userRepository),
+            builder: (_) => HomeScreen(userRepository: widget.userRepository, msgRepository: widget.msgRepository,),
           ),
         );
       } else {
@@ -33,7 +36,7 @@ class _SplashScreenState extends State<SplashScreen> {
           context,
           MaterialPageRoute(
               builder: (_) =>
-                  SignInPage(userRepository: widget.userRepository)),
+                  SignInPage(userRepository: widget.userRepository, msgRepository: widget.msgRepository,)),
         );
       }
     });

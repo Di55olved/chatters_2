@@ -3,7 +3,7 @@
 
 import 'package:chatters_2/bloc/user_bloc/user_events.dart';
 import 'package:chatters_2/bloc/user_bloc/user_states.dart';
-import 'package:chatters_2/core/repository/user_repo.dart';
+import 'package:chatters_2/Core/repository/user_repo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -21,7 +21,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
 
   }
 
-  Future<void> _getUser(Emitter<UserState> emit) async {
+  Future<void> _getUser(emit) async {
     emit(UserLoading());
     try {
       final Stream<QuerySnapshot<Map<String, dynamic>>> Function() user = await userRepository.getuser();

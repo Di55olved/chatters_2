@@ -1,8 +1,9 @@
 import 'dart:developer';
 import 'package:chatters_2/API/api.dart';
+import 'package:chatters_2/Core/repository/message_repo.dart';
 import 'package:chatters_2/Screens/auth/sign_up.dart';
 import 'package:chatters_2/Screens/home_screen.dart';
-import 'package:chatters_2/core/repository/user_repo.dart';
+import 'package:chatters_2/Core/repository/user_repo.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -13,7 +14,8 @@ Color orange = const Color.fromARGB(255, 241, 89, 70);
 
 class SignInPage extends StatefulWidget {
   final UserRepository userRepository;
-  const SignInPage({Key? key, required this.userRepository}) : super(key: key);
+  final MsgRepository msgRepository;
+  const SignInPage({Key? key, required this.userRepository, required this.msgRepository}) : super(key: key);
   @override
   State<SignInPage> createState() => _SignInPageState();
 }
@@ -132,7 +134,7 @@ class _SignInPageState extends State<SignInPage> {
                             Navigator.of(context).pushReplacement(
                               MaterialPageRoute(
                                 builder: (context) => HomeScreen(
-                                    userRepository: widget.userRepository),
+                                    userRepository: widget.userRepository, msgRepository: widget.msgRepository,),
                               ),
                             );
                             //Display the exceptions
@@ -188,7 +190,7 @@ class _SignInPageState extends State<SignInPage> {
                             Navigator.of(context)
                                 .pushReplacement(MaterialPageRoute(
                                     builder: (context) => SignUpPage(
-                                          userRepository: widget.userRepository,
+                                          userRepository: widget.userRepository, msgRepository: widget.msgRepository,
                                         )));
                           },
                           child: Text(
@@ -278,7 +280,7 @@ class _SignInPageState extends State<SignInPage> {
                                                                   (context) =>
                                                                       SignInPage(
                                                                         userRepository:
-                                                                            widget.userRepository,
+                                                                            widget.userRepository, msgRepository: widget.msgRepository,
                                                                       )));
                                                 } else {
                                                   ScaffoldMessenger.of(context)

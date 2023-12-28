@@ -44,7 +44,7 @@ class _MessageCardState extends State<MessageCard> {
         //message content
         Flexible(
           child: Container(
-            padding: EdgeInsets.all(widget.messages.type == Type.image
+            padding: EdgeInsets.all(widget.messages.type == MsgType.image
                 ? MediaQuery.sizeOf(context).width * .03
                 : MediaQuery.sizeOf(context).width * .04),
             margin: EdgeInsets.symmetric(
@@ -58,7 +58,7 @@ class _MessageCardState extends State<MessageCard> {
                     topLeft: Radius.circular(30),
                     topRight: Radius.circular(30),
                     bottomRight: Radius.circular(30))),
-            child: widget.messages.type == Type.text
+            child: widget.messages.type == MsgType.text
                 ?
                 //show text
                 Text(
@@ -127,7 +127,7 @@ class _MessageCardState extends State<MessageCard> {
         //message content
         Flexible(
           child: Container(
-            padding: EdgeInsets.all(widget.messages.type == Type.image
+            padding: EdgeInsets.all(widget.messages.type == MsgType.image
                 ? MediaQuery.sizeOf(context).width * .03
                 : MediaQuery.sizeOf(context).width * .04),
             margin: EdgeInsets.symmetric(
@@ -141,7 +141,7 @@ class _MessageCardState extends State<MessageCard> {
                     topLeft: Radius.circular(30),
                     topRight: Radius.circular(30),
                     bottomLeft: Radius.circular(30))),
-            child: widget.messages.type == Type.text
+            child: widget.messages.type == MsgType.text
                 ?
                 //show text
                 Text(
@@ -265,7 +265,7 @@ class _MessageCardState extends State<MessageCard> {
                     color: Colors.grey, borderRadius: BorderRadius.circular(8)),
               ),
 
-              widget.messages.type == Type.text
+              widget.messages.type == MsgType.text
                   ?
                   //copy option
                   _OptionItem(
@@ -321,7 +321,7 @@ class _MessageCardState extends State<MessageCard> {
                     ),
 
               //edit option
-              if (widget.messages.type == Type.text && isMe)
+              if (widget.messages.type == MsgType.text && isMe)
                 _OptionItem(
                     icon: const Icon(Icons.edit, color: Colors.blue, size: 26),
                     name: 'Edit Message',

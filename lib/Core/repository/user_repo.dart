@@ -1,4 +1,4 @@
-import 'package:chatters_2/core/network.dart';
+import 'package:chatters_2/Core/network.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserRepository {
@@ -9,6 +9,7 @@ class UserRepository {
   Future<Stream<QuerySnapshot<Map<String, dynamic>>> Function()> getuser() async {
     return userApiClient.getAllUsers;
   }
+
   // Future<Stream<QuerySnapshot<Map<String, dynamic>>> Function()> getUserMoc() async {
   //   return userApiClient.fetchUserMoc();
   // }

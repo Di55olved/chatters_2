@@ -2,14 +2,16 @@
 
 import 'dart:developer';
 import 'package:chatters_2/API/api.dart';
+import 'package:chatters_2/Core/repository/message_repo.dart';
 import 'package:chatters_2/Screens/auth/sign_in.dart';
-import 'package:chatters_2/core/repository/user_repo.dart';
+import 'package:chatters_2/Core/repository/user_repo.dart';
 import 'package:email_otp/email_otp.dart';
 import 'package:flutter/material.dart';
 
 class SignUpPage extends StatefulWidget {
   final UserRepository userRepository;
-  const SignUpPage({super.key, required this.userRepository});
+  final MsgRepository msgRepository;
+  const SignUpPage({super.key, required this.userRepository, required this.msgRepository});
 
   @override
   State<SignUpPage> createState() => _SignUpPageState();
@@ -95,7 +97,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                 MaterialPageRoute(
                                     builder: (context) => SignInPage(
                                         userRepository:
-                                            widget.userRepository)));
+                                            widget.userRepository, msgRepository: widget.msgRepository,)));
                           } else {
                             ScaffoldMessenger.of(context)
                                 .showSnackBar(const SnackBar(
@@ -386,7 +388,7 @@ class _SignUpPageState extends State<SignUpPage> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => SignInPage(
-                                      userRepository: widget.userRepository)),
+                                      userRepository: widget.userRepository, msgRepository: widget.msgRepository,)),
                             );
                           },
                           child: Text(

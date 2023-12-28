@@ -163,41 +163,41 @@ class APIs extends ChangeNotifier {
         .set(chatterUser.toJson()));
   }
 
-  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllUsers() {
-    return firestore.collection("users").snapshots();
-  }
+  // static Stream<QuerySnapshot<Map<String, dynamic>>> getAllUsers() {
+  //   return firestore.collection("users").snapshots();
+  // }
 
   static String getConversationID(String id) => user.uid.hashCode <= id.hashCode
       ? '${user.uid}_$id'
       : '${id}_${user.uid}';
 
   //sending message
-  static Future<void> sendMessage(Cuser cuser, String msg, Type type) async {
-    final time = DateTime.now().millisecondsSinceEpoch.toString();
+  // static Future<void> sendMessage(Cuser cuser, String msg, Type type) async {
+  //   final time = DateTime.now().millisecondsSinceEpoch.toString();
 
-    final Messages message = Messages(
-        toId: cuser.id!,
-        msg: msg,
-        read: '',
-        type: type,
-        fromId: user.uid,
-        sent: time);
+  //   final Messages message = Messages(
+  //       toId: cuser.id!,
+  //       msg: msg,
+  //       read: '',
+  //       type: type,
+  //       fromId: user.uid,
+  //       sent: time);
 
-    final ref =
-        firestore.collection('chats/${getConversationID(cuser.id!)}/messages/');
+  //   final ref =
+  //       firestore.collection('chats/${getConversationID(cuser.id!)}/messages/');
 
-    await ref.doc(time).set(message.toJson()).then((value) =>
-        sendPushNotifications(cuser, type == Type.text ? msg : 'image'));
-  }
+  //   await ref.doc(time).set(message.toJson()).then((value) =>
+  //       sendPushNotifications(cuser, type == Type.text ? msg : 'image'));
+  // }
 
 //get all msg for a specific conversation from firestore
-  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllMessages(
-      Cuser user) {
-    return firestore
-        .collection('chats/${getConversationID(user.id!)}/messages/')
-        .orderBy('sent', descending: true)
-        .snapshots();
-  }
+  // static Stream<QuerySnapshot<Map<String, dynamic>>> getAllMessages(
+  //     Cuser user) {
+  //   return firestore
+  //       .collection('chats/${getConversationID(user.id!)}/messages/')
+  //       .orderBy('sent', descending: true)
+  //       .snapshots();
+  // }
 
   static Future<void> updateUserInfo() async {
     await firestore.collection('users').doc(user.uid).update({
@@ -257,25 +257,25 @@ class APIs extends ChangeNotifier {
   }
 
   // send image as msg
-  static Future<void> sendChatImage(Cuser chatUser, File file) async {
-    //getting image file extension
-    final ext = file.path.split('.').last;
+  // static Future<void> sendChatImage(Cuser chatUser, File file) async {
+  //   //getting image file extension
+  //   final ext = file.path.split('.').last;
 
-    //storage file ref with path
-    final ref = storage.ref().child(
-        'images/${getConversationID(chatUser.id!)}/${DateTime.now().microsecondsSinceEpoch}.$ext');
+  //   //storage file ref with path
+  //   final ref = storage.ref().child(
+  //       'images/${getConversationID(chatUser.id!)}/${DateTime.now().microsecondsSinceEpoch}.$ext');
 
-    //uploading image
-    await ref
-        .putFile(file, SettableMetadata(contentType: 'image/$ext'))
-        .then((p0) {
-      print('Data Transferred: ${p0.bytesTransferred / 1000} kb');
-    });
+  //   //uploading image
+  //   await ref
+  //       .putFile(file, SettableMetadata(contentType: 'image/$ext'))
+  //       .then((p0) {
+  //     print('Data Transferred: ${p0.bytesTransferred / 1000} kb');
+  //   });
 
-    //updating image in firestore database
-    final imageUrl = await ref.getDownloadURL();
-    await sendMessage(chatUser, imageUrl, Type.image);
-  }
+  //   //updating image in firestore database
+  //   final imageUrl = await ref.getDownloadURL();
+  //   await sendMessage(chatUser, imageUrl, Type.image);
+  // }
 
   // for getting specific user info
   static Stream<QuerySnapshot<Map<String, dynamic>>> getUserInfo(
@@ -311,7 +311,7 @@ class APIs extends ChangeNotifier {
         .doc(message.sent)
         .delete();
 
-    if (message.type == Type.image) {
+    if (message.type == MsgType.image) {
       await storage.refFromURL(message.msg).delete();
     }
   }

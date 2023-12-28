@@ -2,9 +2,10 @@
 
 import 'dart:io';
 import 'package:chatters_2/API/api.dart';
+import 'package:chatters_2/Core/repository/message_repo.dart';
 import 'package:chatters_2/Models/user.dart';
 import 'package:chatters_2/Screens/auth/sign_in.dart';
-import 'package:chatters_2/core/repository/user_repo.dart';
+import 'package:chatters_2/Core/repository/user_repo.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -13,10 +14,11 @@ import 'package:image_picker/image_picker.dart';
 import '../Support/dialogs.dart';
 
 class ProfileScreen extends StatefulWidget {
+  final MsgRepository msgRepository;
   final UserRepository userRepository;
   final Cuser user;
   const ProfileScreen(
-      {super.key, required this.user, required this.userRepository});
+      {super.key, required this.user, required this.userRepository, required this.msgRepository});
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -61,7 +63,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   context,
                   MaterialPageRoute(
                       builder: (context) =>
-                          SignInPage(userRepository: widget.userRepository)));
+                          SignInPage(userRepository: widget.userRepository, msgRepository: widget.msgRepository,)));
             },
             icon: const Icon(Icons.logout),
             label: const Text('Logout'),

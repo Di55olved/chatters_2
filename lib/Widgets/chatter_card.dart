@@ -1,4 +1,5 @@
 import 'package:chatters_2/API/api.dart';
+import 'package:chatters_2/Core/repository/message_repo.dart';
 import 'package:chatters_2/Models/messages.dart';
 import 'package:chatters_2/Models/user.dart';
 import 'package:chatters_2/Screens/chatter_screen.dart';
@@ -10,7 +11,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 
 class ChatterCard extends StatefulWidget {
   final Cuser user;
-  const ChatterCard({super.key, required this.user});
+  final MsgRepository msgRepository;
+  const ChatterCard({super.key, required this.user, required this.msgRepository});
 
   @override
   State<ChatterCard> createState() => _ChatterCardState();
@@ -32,7 +34,7 @@ class _ChatterCardState extends State<ChatterCard> {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (_) => ChatterScreen(user: widget.user)));
+                    builder: (_) => ChatterScreen(user: widget.user, msgRepository: widget.msgRepository,)));
           },
           child: StreamBuilder(
             //get latest message
@@ -67,6 +69,7 @@ class _ChatterCardState extends State<ChatterCard> {
                         width: MediaQuery.sizeOf(context).width * .055,
                         height: MediaQuery.sizeOf(context).height * .055,
                         imageUrl: widget.user.image!,
+                        //url empty
                         errorWidget: (context, url, error) =>
                             const CircleAvatar(
                           child: Icon(CupertinoIcons.person),
@@ -79,7 +82,7 @@ class _ChatterCardState extends State<ChatterCard> {
                 subtitle: Text(
                   //show latest message
                   _message != null
-                      ? _message!.type == Type.image
+                      ? _message!.type == MsgType.image
                           ? 'image'
                           : _message!.msg
                       : widget.user.about!,

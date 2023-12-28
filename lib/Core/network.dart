@@ -1,3 +1,4 @@
+import 'package:chatters_2/API/api.dart';
 import 'package:chatters_2/Models/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -6,7 +7,6 @@ import 'package:http/http.dart' as http;
 
 class UserApiClient {
   final http.Client httpClient;
-
   static var auth = FirebaseAuth.instance;
 
   // for accessing cloud firestore database
@@ -69,10 +69,4 @@ class UserApiClient {
   //     QuerySnapshotMetadata(hasPendingWrites: false), // Add metadata as needed
   //   )]);
   // }
-}
-
-class Endpoints {
-  static const baseUrl = 'https://jsonplaceholder.typicode.com';
-  static const String userUrl = '$baseUrl/todos';
-  static const productUrl = 'https://dummyjson.com/products';
 }
