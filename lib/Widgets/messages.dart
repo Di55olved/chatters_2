@@ -183,12 +183,11 @@ class _MessageCardState extends State<MessageCard> {
   //dialog for updating message content
   void _showMessageUpdateDialog() {
     String updatedMsg = widget.messages.msg;
-    BuildContext? dialogContext;
+
     showDialog(
         barrierDismissible: false,
         context: context,
         builder: (BuildContext context) {
-          dialogContext = context;
           return AlertDialog(
             contentPadding:
                 const EdgeInsets.only(left: 24, right: 24, top: 20, bottom: 10),
