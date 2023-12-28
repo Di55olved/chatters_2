@@ -315,5 +315,15 @@ class APIs extends ChangeNotifier {
       await storage.refFromURL(message.msg).delete();
     }
   }
+
+  //delete chatter
+  static Future<void> deleteChatTile(String? uid) async {
+    await firestore
+        .collection('users')
+        .doc(auth.currentUser!.uid)
+        .collection('my_users')
+        .doc(uid)
+        .delete();
+  }
 }
   //firestore.collection("users").where('id',isNotEqualTo: user.uid).snapshots()

@@ -29,6 +29,32 @@ class _ChatterCardState extends State<ChatterCard> {
       elevation: 1,
       //    color: Colors.lightBlue[100],
       child: InkWell(
+          onLongPress: () {
+            showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    actions: [
+                      Center(
+                        child: ElevatedButton(
+                            style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(
+                                    const Color.fromARGB(255, 255, 166, 166)),
+                                shape: MaterialStateProperty.all(
+                                    const CircleBorder())),
+                            onPressed: () {
+                              APIs.deleteChatTile(widget.user.id);
+                            },
+                            child: const Icon(
+                              Icons.delete_forever_sharp,
+                              color: Color.fromARGB(255, 255, 17, 0),
+                              size: 50.0,
+                            )),
+                      )
+                    ],
+                  );
+                });
+          },
           onTap: () {
             context.goNamed(RouteNames.chatterScreen, extra: widget.user);
           },
