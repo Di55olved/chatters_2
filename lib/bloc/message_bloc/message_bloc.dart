@@ -23,7 +23,7 @@ class MsgBloc extends Bloc<MsgEvent, MsgState> {
   }
 
   Future<void> _getMessages(user, emit) async {
-    emit(MsgLoading());
+  //  emit(MsgLoading());
     try {
       final Stream<QuerySnapshot<Map<String, dynamic>>> messages =
           await msgRepository.getMsg(user);
@@ -36,7 +36,7 @@ class MsgBloc extends Bloc<MsgEvent, MsgState> {
   }
 
   Future<void> _sendMessages(user, message,type, emit) async {
-    emit(MsgLoading());
+   // emit(MsgLoading());
     try {
       await msgRepository.sendMsg(user, message, type);
       final Stream<QuerySnapshot<Map<String, dynamic>>> messages =
@@ -50,7 +50,7 @@ class MsgBloc extends Bloc<MsgEvent, MsgState> {
   }
 
   Future<void> _sendImgMessages(user, file, emit) async {
-    emit(MsgLoading());
+    emit(MsgImgLoading());
     try {
       await msgRepository.sendImgMsg(user, file);
       final Stream<QuerySnapshot<Map<String, dynamic>>> messages =

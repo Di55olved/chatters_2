@@ -99,6 +99,21 @@ class _ChatterScreenState extends State<ChatterScreen> {
                               ),
                             );
                           }
+                          // if (state is MsgImgLoading) {
+                          //   Align(
+                          //     alignment: Alignment.centerRight,
+                          //     child: Padding(
+                          //       padding: EdgeInsets.symmetric(
+                          //           vertical: 8.0, horizontal: 20),
+                          //       child: Padding(
+                          //         padding: const EdgeInsets.all(8.0),
+                          //         child: CircularProgressIndicator(
+                          //           strokeWidth: 2,
+                          //         ),
+                          //       ),
+                          //     ),
+                          //   );
+                          // }
                           if (state is MsgLoaded) {
                             return StreamBuilder<
                                 QuerySnapshot<Map<String, dynamic>>>(

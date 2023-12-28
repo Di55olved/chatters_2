@@ -12,6 +12,8 @@ class MsgEmpty extends MsgState {}
 
 class MsgLoading extends MsgState {}
 
+class MsgImgLoading extends MsgState{}
+
 class MsgLoaded extends MsgState {
   final Stream<QuerySnapshot<Map<String, dynamic>>> messages;
 
