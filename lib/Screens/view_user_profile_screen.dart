@@ -1,8 +1,6 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatters_2/API/api.dart';
 import 'package:chatters_2/Models/user.dart';
 import 'package:chatters_2/Navigaitions/routes_names.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart'; // Import the intl package
@@ -71,17 +69,11 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
                       height: MediaQuery.sizeOf(context).height * .03),
 
                   //user profile picture
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(
-                        MediaQuery.sizeOf(context).height * .1),
-                    child: CachedNetworkImage(
-                      width: MediaQuery.sizeOf(context).height * .2,
-                      height: MediaQuery.sizeOf(context).height * .2,
-                      fit: BoxFit.cover,
-                      imageUrl: widget.user.image!,
-                      errorWidget: (context, url, error) => const CircleAvatar(
-                          child: Icon(CupertinoIcons.person)),
-                    ),
+                  CircleAvatar(
+                    radius: 50.0,
+                    backgroundImage: APIs.buildNetworkImage(widget.user),
+                    backgroundColor: Colors.transparent,
+                    foregroundColor: Colors.transparent,
                   ),
 
                   // for adding some space

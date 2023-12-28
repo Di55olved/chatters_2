@@ -30,23 +30,6 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final _formKey = GlobalKey<FormState>();
-  String? _image;
-
-  @override
-  void initState() {
-    _image = widget.user.image;
-
-    super.initState();
-  }
-
-  ImageProvider _buildNetworkImage(String imageUrl) {
-    try {
-      return NetworkImage(imageUrl);
-    } catch (e) {
-      print("Error loading image: $e");
-      return NetworkImage("https://picsum.photos/200/300?grayscale");
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -107,7 +90,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: Stack(children: [
                       CircleAvatar(
                         radius: 50.0,
-                        backgroundImage: _buildNetworkImage(_image.toString()),
+                        backgroundImage: APIs.buildNetworkImage(widget.user),
                         backgroundColor: Colors.transparent,
                         foregroundColor: Colors.transparent,
                       ),
@@ -242,12 +225,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         final XFile? image = await picker.pickImage(
                             source: ImageSource.gallery, imageQuality: 80);
                         if (image != null) {
-                          //                   log('Image Path: ${image.path}');
-                          setState(() {
-                            _image = image.path;
-                          });
-
-                          APIs.updateProfilePicture(File(_image!));
+                          APIs.updateProfilePicture(File(image.path));
                           // for hiding bottom sheet
                           Navigator.pop(context);
                         }
@@ -268,12 +246,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         final XFile? image = await picker.pickImage(
                             source: ImageSource.camera, imageQuality: 80);
                         if (image != null) {
-                          //               log('Image Path: ${image.path}');
-                          setState(() {
-                            _image = image.path;
-                          });
-
-                          APIs.updateProfilePicture(File(_image!));
+                          APIs.updateProfilePicture(File(image.path));
                           // for hiding bottom sheet
                           Navigator.pop(context);
                         }

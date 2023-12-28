@@ -100,11 +100,7 @@ class _ChatterCardState extends State<ChatterCard> {
                       ),
                       child: CircleAvatar(
                         radius: 28.0,
-                        backgroundImage: NetworkImage(
-                          widget.user.image.toString().isEmpty
-                              ? "https://picsum.photos/200/300?grayscale"
-                              : widget.user.image.toString(),
-                        ),
+                        backgroundImage: APIs.buildNetworkImage(widget.user),
                         backgroundColor: Colors.transparent,
                         foregroundColor: Colors.transparent,
                       ),

@@ -1,15 +1,18 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first, must_be_immutable
 // ignore_for_file: use_build_context_synchronously, avoid_print
 
 import 'dart:typed_data';
-import 'package:http/http.dart' as http;
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:chatters_2/Models/user.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:chatters_2/API/api.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:chatters_2/Models/user.dart';
 
 class ProfileDialog extends StatelessWidget {
-  const ProfileDialog({super.key, required this.user});
+  const ProfileDialog({
+    super.key,
+    required this.user,
+  });
 
   final Cuser user;
 
@@ -61,17 +64,11 @@ class ProfileDialog extends StatelessWidget {
                     print('Error While Saving Image: $e');
                   }
                 },
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(
-                      MediaQuery.sizeOf(context).height * .1),
-                  child: CachedNetworkImage(
-                    width: MediaQuery.sizeOf(context).height * .2,
-                    height: MediaQuery.sizeOf(context).height * .2,
-                    fit: BoxFit.cover,
-                    imageUrl: user.image!,
-                    errorWidget: (context, url, error) =>
-                        const CircleAvatar(child: Icon(CupertinoIcons.person)),
-                  ),
+                child: CircleAvatar(
+                  radius: 50.0,
+                  backgroundImage: APIs.buildNetworkImage(user),
+                  backgroundColor: Colors.transparent,
+                  foregroundColor: Colors.transparent,
                 ),
               ),
             ),

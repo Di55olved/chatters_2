@@ -13,6 +13,27 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 
 class APIs extends ChangeNotifier {
+  //image url
+  static String hiURl =
+      "https://cdn-icons-png.flaticon.com/512/6028/6028690.png";
+
+  //some function to load NetworkImage()
+  static ImageProvider buildNetworkImage(Cuser user) {
+    log("user imageURL: ${user.image.toString()}");
+    try {
+      return NetworkImage(user.image.toString());
+    } catch (e) {
+      if (e is NetworkImageLoadException) {
+        // Handle specific NetworkImageLoadException
+        log("NetworkImageLoadException: $e");
+      } else {
+        // Handle other exceptions
+        log("Error loading image: $e");
+      }
+      return NetworkImage(hiURl);
+    }
+  }
+
   //for auntheniciation
   static var auth = FirebaseAuth.instance;
 
@@ -135,6 +156,8 @@ class APIs extends ChangeNotifier {
         await getFirebaseMessagingToken();
         APIs.updateActiveStatus(true);
         log('My Data:${user.data()}');
+
+        //update Cuser properties
       } else {
         await createChatter().then((value) => getSelfInfo());
       }
@@ -195,7 +218,7 @@ class APIs extends ChangeNotifier {
             .collection("my_users")
             .doc(auth.currentUser!.uid)
             .set(userData.data()!);
-            
+
         final time = DateTime.now().millisecondsSinceEpoch.toString();
 
         final Messages message = Messages(
@@ -297,7 +320,7 @@ class APIs extends ChangeNotifier {
     await firestore
         .collection('users')
         .doc(user.uid)
-        .update({'image ': me.image});
+        .update({'image': me.image});
   }
 
   // send image as msg
