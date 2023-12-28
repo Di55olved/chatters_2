@@ -3,6 +3,7 @@ import 'package:chatters_2/API/api.dart';
 import 'package:chatters_2/Navigaitions/routes_names.dart';
 import 'package:chatters_2/Screens/auth/sign_in.dart';
 import 'package:chatters_2/Widgets/my_assets.dart';
+import 'package:chatters_2/core/repository/message_repo.dart';
 import 'package:chatters_2/core/repository/user_repo.dart';
 import 'package:chatters_2/main.dart';
 import 'package:email_otp/email_otp.dart';
@@ -11,7 +12,8 @@ import 'package:go_router/go_router.dart';
 
 class SignUpPage extends StatefulWidget {
   final UserRepository userRepository;
-  const SignUpPage({super.key, required this.userRepository});
+  final MsgRepository msgRepository;
+  const SignUpPage({super.key, required this.userRepository, required this.msgRepository,});
 
   @override
   State<SignUpPage> createState() => _SignUpPageState();
@@ -350,7 +352,7 @@ class _SignUpPageState extends State<SignUpPage> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => SignInPage(
-                                      userRepository: widget.userRepository)),
+                                      userRepository: widget.userRepository, msgRepository: widget.msgRepository,)),
                             );
                           },
                           child: Text(

@@ -4,9 +4,7 @@ import 'package:chatters_2/Models/user.dart';
 import 'package:chatters_2/Navigaitions/routes_names.dart';
 import 'package:chatters_2/Support/data_utils.dart';
 import 'package:chatters_2/Widgets/profile_dialog.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
 
 class ChatterCard extends StatefulWidget {
@@ -44,6 +42,7 @@ class _ChatterCardState extends State<ChatterCard> {
                                     const CircleBorder())),
                             onPressed: () {
                               APIs.deleteChatTile(widget.user.id);
+                              Navigator.of(context).pop();
                             },
                             child: const Icon(
                               Icons.delete_forever_sharp,
@@ -71,63 +70,90 @@ class _ChatterCardState extends State<ChatterCard> {
               if (list.isNotEmpty) {
                 _message = list[0];
               }
-              return ListTile(
-                leading: SizedBox(
-                  width: MediaQuery.of(context).size.width *
-                      0.1, // Adjust as needed
-                  height: MediaQuery.of(context).size.width *
-                      0.1, // Adjust as needed
-
-                  child: InkWell(
+              return Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.0),
+                    gradient: LinearGradient(
+                        colors: [APIs.purple, Colors.pink, APIs.purple])),
+                child: ListTile(
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16.0,
+                    vertical: 8.0,
+                  ),
+                  leading: InkWell(
                     onTap: () {
                       showDialog(
-                          context: context,
-                          builder: (_) => ProfileDialog(user: widget.user));
+                        context: context,
+                        builder: (_) => ProfileDialog(user: widget.user),
+                      );
                     },
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(
-                          MediaQuery.of(context).size.height * 0.03),
-                      child: CachedNetworkImage(
-                        width: MediaQuery.sizeOf(context).width * .055,
-                        height: MediaQuery.sizeOf(context).height * .055,
-                        imageUrl: widget.user.image!,
-                        errorWidget: (context, url, error) =>
-                            const CircleAvatar(
-                          child: Icon(CupertinoIcons.person),
+                    child: Container(
+                      width: 60.0,
+                      height: 60.0,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: Colors
+                              .white54, // Adjust the color of the ring to black
+                          width: 2.0, // Adjust the width of the ring
                         ),
+                      ),
+                      child: CircleAvatar(
+                        radius: 28.0,
+                        backgroundImage: NetworkImage(
+                          widget.user.image.toString().isEmpty
+                              ? "https://picsum.photos/200/300?grayscale"
+                              : widget.user.image.toString(),
+                        ),
+                        backgroundColor: Colors.transparent,
+                        foregroundColor: Colors.transparent,
                       ),
                     ),
                   ),
-                ),
-                title: Text(widget.user.name!),
-                subtitle: Text(
-                  //show latest message
-                  _message != null
-                      ? _message!.type == Type.image
-                          ? 'image'
-                          : _message!.msg
-                      : widget.user.about!,
-                  maxLines: 1,
-                ),
-                trailing: _message == null
-                    ? null //no messages
-                    :
-                    //show when message unread
-                    _message!.read.isEmpty && _message?.fromId != APIs.user.uid
-                        ? Container(
-                            width: 15,
-                            height: 15,
-                            decoration: BoxDecoration(
+                  title: Text(
+                    widget.user.name!,
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16.0,
+                        color: APIs.yellow),
+                  ),
+                  subtitle: Text(
+                    _message != null
+                        ? _message!.type == MsgType.image
+                            ? '📷 Image'
+                            : _message!.msg
+                        : widget.user.about!,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: Colors.blueGrey[200],
+                      fontSize: 14.0,
+                    ),
+                  ),
+                  trailing: _message == null
+                      ? null // No messages
+                      : _message!.read.isEmpty &&
+                              _message?.fromId != APIs.user.uid
+                          ? Container(
+                              width: 15,
+                              height: 15,
+                              decoration: BoxDecoration(
                                 color: Colors.greenAccent.shade400,
-                                borderRadius: BorderRadius.circular(10)),
-                          )
-                        :
-                        //message read
-                        Text(
-                            MyDateUtil.getLastMessageTime(
-                                context: context, time: _message!.sent),
-                            style: const TextStyle(color: Colors.black45),
-                          ),
+                                shape: BoxShape.circle,
+                              ),
+                            )
+                          : Text(
+                              MyDateUtil.getLastMessageTime(
+                                context: context,
+                                time: _message!.sent,
+                              ),
+                              style: TextStyle(
+                                color: Colors.grey[500],
+                                fontSize: 12.0,
+                              ),
+                            ),
+                  tileColor: Colors.transparent,
+                ),
               );
             },
           )),

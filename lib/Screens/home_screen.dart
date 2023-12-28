@@ -9,6 +9,7 @@ import 'package:chatters_2/Widgets/my_assets.dart';
 import 'package:chatters_2/bloc/user_bloc/user_bloc.dart';
 import 'package:chatters_2/bloc/user_bloc/user_events.dart';
 import 'package:chatters_2/bloc/user_bloc/user_states.dart';
+import 'package:chatters_2/core/repository/message_repo.dart';
 import 'package:chatters_2/core/repository/user_repo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -19,8 +20,13 @@ import 'package:go_router/go_router.dart';
 
 class HomeScreen extends StatefulWidget {
   final UserRepository userRepository;
+  final MsgRepository msgRepository;
 
-  const HomeScreen({super.key, required this.userRepository});
+  const HomeScreen({
+    super.key,
+    required this.userRepository,
+    required this.msgRepository,
+  });
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -85,9 +91,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   ? TextField(
                       decoration: const InputDecoration(
                           border: InputBorder.none,
-                          hintText: 'Name, Email, ...'),
+                          hintText: 'Name, Email, ...',
+                          hintStyle: TextStyle(color: Colors.white)),
                       autofocus: true,
-                      style: const TextStyle(fontSize: 17, letterSpacing: 0.5),
+                      style: const TextStyle(
+                          fontSize: 17,
+                          letterSpacing: 0.5,
+                          color: Colors.white),
                       //when search text changes then updated search list
                       onChanged: (val) {
                         //search logic

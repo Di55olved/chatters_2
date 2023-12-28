@@ -4,14 +4,20 @@ import 'dart:developer';
 import 'package:chatters_2/API/api.dart';
 import 'package:chatters_2/Navigaitions/routes_names.dart';
 import 'package:chatters_2/Widgets/my_assets.dart';
+import 'package:chatters_2/core/repository/message_repo.dart';
 import 'package:chatters_2/core/repository/user_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class SplashScreen extends StatefulWidget {
   final UserRepository? userRepository;
+  final MsgRepository msgRepository;
 
-  SplashScreen({Key? key, required this.userRepository}) : super(key: key);
+  const SplashScreen({
+    super.key,
+    required this.userRepository,
+    required this.msgRepository,
+  });
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -27,7 +33,7 @@ class _SplashScreenState extends State<SplashScreen>
     super.initState();
 
     _animationController = AnimationController(
-      duration: Duration(seconds: 2),
+      duration: const Duration(seconds: 2),
       vsync: this,
     );
 

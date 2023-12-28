@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
@@ -172,22 +174,63 @@ class APIs extends ChangeNotifier {
       : '${id}_${user.uid}';
 
   //sending message
-  static Future<void> sendMessage(Cuser cuser, String msg, Type type) async {
-    final time = DateTime.now().millisecondsSinceEpoch.toString();
+  static Future<void> sendMessage(Cuser cuser, String msg, MsgType type) async {
+    try {
+      bool check = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(cuser.id)
+          .collection('my_users')
+          .doc(auth.currentUser!.uid)
+          .get()
+          .then((DocumentSnapshot documentSnapshot) => documentSnapshot.exists);
+      if (check == false) {
+        final userData = await firestore
+            .collection("users")
+            .doc(auth.currentUser!.uid)
+            .get();
 
-    final Messages message = Messages(
-        toId: cuser.id!,
-        msg: msg,
-        read: '',
-        type: type,
-        fromId: user.uid,
-        sent: time);
+        await firestore
+            .collection('users')
+            .doc(cuser.id)
+            .collection("my_users")
+            .doc(auth.currentUser!.uid)
+            .set(userData.data()!);
+            
+        final time = DateTime.now().millisecondsSinceEpoch.toString();
 
-    final ref =
-        firestore.collection('chats/${getConversationID(cuser.id!)}/messages/');
+        final Messages message = Messages(
+            toId: cuser.id!,
+            msg: msg,
+            read: '',
+            type: type,
+            fromId: user.uid,
+            sent: time);
 
-    await ref.doc(time).set(message.toJson()).then((value) =>
-        sendPushNotifications(cuser, type == Type.text ? msg : 'image'));
+        final ref = firestore
+            .collection('chats/${getConversationID(cuser.id!)}/messages/');
+
+        await ref.doc(time).set(message.toJson()).then((value) =>
+            sendPushNotifications(cuser, type == MsgType.text ? msg : 'image'));
+      } else {
+        final time = DateTime.now().millisecondsSinceEpoch.toString();
+
+        final Messages message = Messages(
+            toId: cuser.id!,
+            msg: msg,
+            read: '',
+            type: type,
+            fromId: user.uid,
+            sent: time);
+
+        final ref = firestore
+            .collection('chats/${getConversationID(cuser.id!)}/messages/');
+
+        await ref.doc(time).set(message.toJson()).then((value) =>
+            sendPushNotifications(cuser, type == MsgType.text ? msg : 'image'));
+      }
+    } catch (e) {
+      print('Send Message Error: $e');
+    }
   }
 
 //get all msg for a specific conversation from firestore
@@ -203,6 +246,7 @@ class APIs extends ChangeNotifier {
     await firestore.collection('users').doc(user.uid).update({
       'name': me.name,
       'about': me.about,
+      'image': me.image,
     });
   }
 
@@ -274,7 +318,7 @@ class APIs extends ChangeNotifier {
 
     //updating image in firestore database
     final imageUrl = await ref.getDownloadURL();
-    await sendMessage(chatUser, imageUrl, Type.image);
+    await sendMessage(chatUser, imageUrl, MsgType.image);
   }
 
   // for getting specific user info
@@ -311,7 +355,7 @@ class APIs extends ChangeNotifier {
         .doc(message.sent)
         .delete();
 
-    if (message.type == Type.image) {
+    if (message.type == MsgType.image) {
       await storage.refFromURL(message.msg).delete();
     }
   }

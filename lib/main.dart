@@ -1,5 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:chatters_2/Core/message_api_client.dart';
 import 'package:chatters_2/Navigaitions/my_navigations.dart';
+import 'package:chatters_2/core/repository/message_repo.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -13,12 +15,20 @@ import 'package:chatters_2/core/network.dart';
 import 'package:chatters_2/core/repository/user_repo.dart';
 import 'firebase_options.dart';
 
+//Mandatory objects
 APIs obj = APIs();
 UserRepository userRepository = UserRepository(
   userApiClient: UserApiClient(
     httpClient: http.Client(),
   ),
 );
+MsgRepository msgRepository = MsgRepository(
+  messageApiClient: MessageApiClient(
+    httpClient: http.Client(),
+  ),
+);
+
+//Main function
 void main() async {
   // Initialzie Navigation
   MyRouter router = MyRouter();
@@ -32,6 +42,7 @@ void main() async {
   runApp(MyApp(
     userRepository: userRepository,
     router: router.router,
+    msgRepository: msgRepository,
   ));
 }
 
@@ -54,9 +65,11 @@ class MyApp extends StatelessWidget {
     super.key,
     required this.userRepository,
     required this.router,
+    required this.msgRepository,
   });
   final UserRepository userRepository;
   final GoRouter router;
+  final MsgRepository msgRepository;
 
   @override
   Widget build(BuildContext context) {

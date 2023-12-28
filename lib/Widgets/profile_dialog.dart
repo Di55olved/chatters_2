@@ -1,9 +1,12 @@
+// ignore_for_file: use_build_context_synchronously, avoid_print
+
+import 'dart:typed_data';
+import 'package:http/http.dart' as http;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatters_2/Models/user.dart';
-import 'package:chatters_2/Screens/view_user_profile_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 
 class ProfileDialog extends StatelessWidget {
   const ProfileDialog({super.key, required this.user});
@@ -17,61 +20,78 @@ class ProfileDialog extends StatelessWidget {
       backgroundColor: Colors.white.withOpacity(.9),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       content: SizedBox(
-          width: MediaQuery.sizeOf(context).width * .6,
-          height: MediaQuery.sizeOf(context).height * .35,
-          child: Stack(
-            children: [
-              //user profile picture
-              Positioned(
-                top: MediaQuery.sizeOf(context).height * .075,
-                left: MediaQuery.sizeOf(context).width * .1,
-                child:                   ClipRRect(
-                    borderRadius: BorderRadius.circular(MediaQuery.sizeOf(context).height * .1),
-                    child: CachedNetworkImage(
-                      width: MediaQuery.sizeOf(context).height * .2,
-                      height: MediaQuery.sizeOf(context).height * .2,
-                      fit: BoxFit.cover,
-                      imageUrl: user.image!,
-                      errorWidget: (context, url, error) => const CircleAvatar(
-                          child: Icon(CupertinoIcons.person)),
-                    ),
-                  ),
+        width: MediaQuery.sizeOf(context).width * .6,
+        height: MediaQuery.sizeOf(context).height * .35,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // User profile picture
+            Padding(
+              padding: EdgeInsets.only(
+                  top: MediaQuery.of(context).size.height * 0.05),
+              child: InkWell(
+                onLongPress: () async {
+                  try {
+                    // Fetch image URL from Firestore
+                    String? imageUrl = user.image;
 
-              ),
+                    // Use a network library (e.g., http) to download the image data
+                    final response = await http.get(Uri.parse(imageUrl!));
 
-              //user name
-              Positioned(
-                left: MediaQuery.sizeOf(context).width * .04,
-                top: MediaQuery.sizeOf(context).height * .02,
-                width: MediaQuery.sizeOf(context).width * .55,
-                child: Text(user.name!,
-                    style: const TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.w500)),
-              ),
+                    if (response.statusCode == 200) {
+                      // Convert the response body to Uint8List
+                      Uint8List uint8List = response.bodyBytes;
 
-              //info button
-              Positioned(
-                  right: 8,
-                  top: 6,
-                  child: MaterialButton(
-                    onPressed: () {
-                      //for hiding image dialog
+                      // Save the image to the gallery
+                      await ImageGallerySaver.saveImage(
+                        uint8List,
+                        isReturnImagePathOfIOS:
+                            true, // Set to true if targeting iOS
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text("Image Saved Successsfully"),
+                        duration: Duration(seconds: 2),
+                      ));
+
                       Navigator.pop(context);
+                    } else {
+                      print('Failed to download image: ${response.statusCode}');
+                    }
+                  } catch (e) {
+                    print('Error While Saving Image: $e');
+                  }
+                },
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(
+                      MediaQuery.sizeOf(context).height * .1),
+                  child: CachedNetworkImage(
+                    width: MediaQuery.sizeOf(context).height * .2,
+                    height: MediaQuery.sizeOf(context).height * .2,
+                    fit: BoxFit.cover,
+                    imageUrl: user.image!,
+                    errorWidget: (context, url, error) =>
+                        const CircleAvatar(child: Icon(CupertinoIcons.person)),
+                  ),
+                ),
+              ),
+            ),
 
-                      //move to view profile screen
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (_) => ViewProfileScreen(user: user)));
-                    },
-                    minWidth: 0,
-                    padding: const EdgeInsets.all(0),
-                    shape: const CircleBorder(),
-                    child: const Icon(Icons.info_outline,
-                        color: Colors.blue, size: 30),
-                  ))
-            ],
-          )),
+            // User name
+            Padding(
+              padding: EdgeInsets.only(
+                  top: MediaQuery.of(context).size.height * 0.02),
+              child: Text(
+                user.name!,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

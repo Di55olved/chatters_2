@@ -1,22 +1,33 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 // ignore_for_file: prefer_const_constructors, prefer_final_fields
 import 'dart:io';
+
+import 'package:chatters_2/bloc/message_bloc/message_states.dart';
+import 'package:chatters_2/core/repository/message_repo.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
+
 import 'package:chatters_2/API/api.dart';
 import 'package:chatters_2/Models/messages.dart';
 import 'package:chatters_2/Models/user.dart';
 import 'package:chatters_2/Navigaitions/routes_names.dart';
 import 'package:chatters_2/Support/data_utils.dart';
 import 'package:chatters_2/Widgets/messages.dart';
-import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:chatters_2/bloc/message_bloc/message_bloc.dart';
+import 'package:chatters_2/bloc/message_bloc/message_event.dart';
 
 class ChatterScreen extends StatefulWidget {
   final Cuser user;
-  const ChatterScreen({super.key, required this.user});
+  final MsgRepository msgRepository;
+  const ChatterScreen({
+    super.key,
+    required this.user,
+    required this.msgRepository,
+  });
 
   @override
   State<ChatterScreen> createState() => _ChatterScreenState();
@@ -26,6 +37,15 @@ class _ChatterScreenState extends State<ChatterScreen> {
   //all messages
   //Cuser currentUser = APIs.user.uid;
   List<Messages> _msglist = [];
+  late MsgBloc _msgBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _msgBloc = MsgBloc(msgRepository: widget.msgRepository);
+    _msgBloc.add(FetchMsg(user: widget.user));
+    APIs.getSelfInfo();
+  }
 
   final _textController = TextEditingController();
   bool _showEmoji = false, _isUploading = false;
@@ -52,53 +72,86 @@ class _ChatterScreenState extends State<ChatterScreen> {
               automaticallyImplyLeading: false,
               flexibleSpace: _appBar(),
               backgroundColor: APIs.purple,
-              leading: IconButton(
-                onPressed: () {
-                  context.goNamed(RouteNames.homeScreen);
-                },
-                icon: const Icon(Icons.arrow_back),
-                color: APIs.orange,
-              ),
             ),
             body: Column(
               children: [
                 Expanded(
-                    child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                  stream: APIs.getAllMessages(widget.user),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasError) {
-                      return Text('Error: ${snapshot.error}');
-                    }
+                    child: BlocBuilder(
+                        bloc: _msgBloc,
+                        builder: (_, MsgState state) {
+                          if (state is MsgEmpty) {
+                            return const Center(child: Text('Empty state'));
+                          }
+                          if (state is MsgLoading) {
+                            return const Align(
+                              alignment: Alignment.centerRight,
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 8.0, horizontal: 20),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
+                          if (state is MsgLoaded) {
+                            return StreamBuilder<
+                                QuerySnapshot<Map<String, dynamic>>>(
+                              stream: state.messages,
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData) {
+                                  _msglist = snapshot.data!.docs
+                                      .map((doc) => Messages.fromJson(
+                                          doc.data() as Map<String, dynamic>))
+                                      .toList(); // ??
+                                  //[];
+                                  if (_msglist.isEmpty) {
+                                    // Handle empty list
+                                    return const Center(
+                                      child: Text(
+                                        "Say Hi 👋",
+                                        style: TextStyle(fontSize: 30),
+                                      ),
+                                    );
+                                  }
 
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return SizedBox();
-                    }
-
-                    final data = snapshot.data?.docs;
-
-                    _msglist = data
-                            ?.map((doc) => Messages.fromJson(
-                                doc.data() as Map<String, dynamic>))
-                            .toList() ??
-                        [];
-                    if (data != null && data.isNotEmpty) {
-                      return ListView.builder(
-                        reverse: true,
-                        itemCount: _msglist.length,
-                        itemBuilder: (context, index) {
-                          return MessageCard(messages: _msglist[index]);
-                        },
-                      );
-                    } else {
-                      return Center(
-                        child: Text(
-                          "Say Hi 👋",
-                          style: TextStyle(fontSize: 30),
-                        ),
-                      );
-                    }
-                  },
-                )),
+                                  return ListView.builder(
+                                    reverse: true,
+                                    itemCount: _msglist.length,
+                                    itemBuilder: (context, index) {
+                                      return MessageCard(
+                                        messages: _msglist[index],
+                                        user: widget.user,
+                                      );
+                                    },
+                                  );
+                                } else if (snapshot.hasError) {
+                                  // Handle error state
+                                  return Center(
+                                    child: Text(
+                                      "Error: ${snapshot.error}",
+                                      style: TextStyle(fontSize: 18),
+                                    ),
+                                  );
+                                } else {
+                                  // Handle initial loading state
+                                  return const Center(
+                                      child: CircularProgressIndicator());
+                                }
+                              },
+                            );
+                          }
+                          if (state is MsgError) {
+                            return const Text(
+                              'Something went wrong!',
+                              style: TextStyle(color: Colors.red),
+                            );
+                          }
+                          return const SizedBox();
+                        })),
                 if (_isUploading == true)
                   Align(
                     alignment: Alignment.centerRight,
@@ -158,24 +211,18 @@ class _ChatterScreenState extends State<ChatterScreen> {
                 children: [
                   //back button
                   IconButton(
-                      onPressed: () => Navigator.pop(context),
-                      icon:
-                          const Icon(Icons.arrow_back, color: Colors.black54)),
+                      onPressed: () {
+                        context.goNamed(RouteNames.homeScreen);
+                      },
+                      icon: Icon(Icons.arrow_back, color: APIs.orange)),
 
                   //user profile picture
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(
-                        MediaQuery.sizeOf(context).height * .03),
-                    child: CachedNetworkImage(
-                      width: MediaQuery.sizeOf(context).height * .05,
-                      height: MediaQuery.sizeOf(context).height * .05,
-                      imageUrl:
-                          '${list.isNotEmpty ? list[0].image : widget.user.image}',
-                      errorWidget: (context, url, error) => const CircleAvatar(
-                          child: Icon(CupertinoIcons.person)),
-                    ),
+                  CircleAvatar(
+                    radius: 20.0,
+                    backgroundImage: NetworkImage(widget.user.image.toString()),
+                    backgroundColor: Colors.transparent,
+                    foregroundColor: Colors.transparent,
                   ),
-
                   //for adding some space
                   const SizedBox(width: 10),
 
@@ -261,7 +308,9 @@ class _ChatterScreenState extends State<ChatterScreen> {
                           setState(() {
                             _isUploading = true;
                           });
-                          await APIs.sendChatImage(widget.user, File(i.path));
+                          _msgBloc
+                              .add(SendImgMessage(widget.user, File(i.path)));
+
                           setState(() {
                             _isUploading = false;
                           });
@@ -280,14 +329,12 @@ class _ChatterScreenState extends State<ChatterScreen> {
                             _isUploading = true;
                           });
 
-                          await APIs.sendChatImage(
-                              widget.user, File(image.path));
+                          _msgBloc.add(
+                              SendImgMessage(widget.user, File(image.path)));
+
                           setState(() {
                             _isUploading = false;
                           });
-
-                          // for hiding bottom sheet
-                          //   Navigator.pop(context);
                         }
                       },
                       icon: Icon(Icons.camera_alt_rounded,
@@ -299,7 +346,8 @@ class _ChatterScreenState extends State<ChatterScreen> {
           MaterialButton(
             onPressed: () {
               if (_textController.text.isNotEmpty) {
-                APIs.sendMessage(widget.user, _textController.text, Type.text);
+                _msgBloc.add(SendMessage(
+                    widget.user, _textController.text, MsgType.text));
                 _textController.text = '';
               }
             },

@@ -1,4 +1,8 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chatters_2/Models/user.dart';
+import 'package:chatters_2/Navigaitions/routes_names.dart';
 import 'package:chatters_2/Support/dialogs.dart';
 import 'package:flutter/material.dart';
 
@@ -6,13 +10,15 @@ import 'package:chatters_2/API/api.dart';
 import 'package:chatters_2/Models/messages.dart';
 import 'package:chatters_2/Support/data_utils.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 
 class MessageCard extends StatefulWidget {
-  const MessageCard({super.key, required this.messages});
+  const MessageCard({super.key, required this.messages, required this.user});
 
   final Messages messages;
+  final Cuser user;
 
   @override
   State<MessageCard> createState() => _MessageCardState();
@@ -44,7 +50,7 @@ class _MessageCardState extends State<MessageCard> {
         //message content
         Flexible(
           child: Container(
-            padding: EdgeInsets.all(widget.messages.type == Type.image
+            padding: EdgeInsets.all(widget.messages.type == MsgType.image
                 ? MediaQuery.sizeOf(context).width * .03
                 : MediaQuery.sizeOf(context).width * .04),
             margin: EdgeInsets.symmetric(
@@ -58,7 +64,7 @@ class _MessageCardState extends State<MessageCard> {
                     topLeft: Radius.circular(30),
                     topRight: Radius.circular(30),
                     bottomRight: Radius.circular(30))),
-            child: widget.messages.type == Type.text
+            child: widget.messages.type == MsgType.text
                 ?
                 //show text
                 Text(
@@ -127,7 +133,7 @@ class _MessageCardState extends State<MessageCard> {
         //message content
         Flexible(
           child: Container(
-            padding: EdgeInsets.all(widget.messages.type == Type.image
+            padding: EdgeInsets.all(widget.messages.type == MsgType.image
                 ? MediaQuery.sizeOf(context).width * .03
                 : MediaQuery.sizeOf(context).width * .04),
             margin: EdgeInsets.symmetric(
@@ -141,7 +147,7 @@ class _MessageCardState extends State<MessageCard> {
                     topLeft: Radius.circular(30),
                     topRight: Radius.circular(30),
                     bottomLeft: Radius.circular(30))),
-            child: widget.messages.type == Type.text
+            child: widget.messages.type == MsgType.text
                 ?
                 //show text
                 Text(
@@ -179,6 +185,7 @@ class _MessageCardState extends State<MessageCard> {
     String updatedMsg = widget.messages.msg;
     BuildContext? dialogContext;
     showDialog(
+        barrierDismissible: false,
         context: context,
         builder: (BuildContext context) {
           dialogContext = context;
@@ -215,9 +222,11 @@ class _MessageCardState extends State<MessageCard> {
             actions: [
               //cancel button
               MaterialButton(
-                  onPressed: () {
+                  onPressed: () async {
                     //hide alert dialog
-                    Navigator.pop(context);
+                    Navigator.of(context).pop();
+                    context.goNamed(RouteNames.chatterScreen,
+                        extra: widget.user);
                   },
                   child: const Text(
                     'Cancel',
@@ -228,8 +237,17 @@ class _MessageCardState extends State<MessageCard> {
               MaterialButton(
                   onPressed: () {
                     //hide alert dialog
-                    Navigator.pop(context);
-                    APIs.updateMessage(widget.messages, updatedMsg);
+                    if (updatedMsg == '') {
+                      APIs.deleteMessage(widget.messages);
+                      Navigator.of(context).pop();
+                      context.goNamed(RouteNames.chatterScreen,
+                          extra: widget.user);
+                    } else {
+                      APIs.updateMessage(widget.messages, updatedMsg);
+                      Navigator.of(context).pop();
+                      context.goNamed(RouteNames.chatterScreen,
+                          extra: widget.user);
+                    }
                   },
                   child: const Text(
                     'Update',
@@ -237,16 +255,12 @@ class _MessageCardState extends State<MessageCard> {
                   ))
             ],
           );
-        }).then((_) {
-      // Use the stored context to safely dismiss the dialog
-      if (dialogContext != null && mounted) {
-        Navigator.pop(dialogContext!);
-      }
-    });
+        });
   }
 
   void _showBottomSheet(bool isMe) {
     showModalBottomSheet(
+        isDismissible: false,
         context: context,
         shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
@@ -264,8 +278,15 @@ class _MessageCardState extends State<MessageCard> {
                 decoration: BoxDecoration(
                     color: Colors.grey, borderRadius: BorderRadius.circular(8)),
               ),
+              IconButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    context.goNamed(RouteNames.chatterScreen,
+                        extra: widget.user);
+                  },
+                  icon: const Icon(Icons.close)),
 
-              widget.messages.type == Type.text
+              widget.messages.type == MsgType.text
                   ?
                   //copy option
                   _OptionItem(
@@ -277,7 +298,9 @@ class _MessageCardState extends State<MessageCard> {
                                 ClipboardData(text: widget.messages.msg))
                             .then((value) {
                           //for hiding bottom sheet
-                          Navigator.pop(context);
+                          Navigator.of(context).pop();
+                          context.goNamed(RouteNames.chatterScreen,
+                              extra: widget.user);
 
                           Dialogs.showSnackBar(context, 'Text Copied!');
                         });
@@ -309,7 +332,9 @@ class _MessageCardState extends State<MessageCard> {
                                   true, // Set to true if targeting iOS
                             );
 
-                            Navigator.pop(context);
+                            Navigator.of(context).pop();
+                            context.goNamed(RouteNames.chatterScreen,
+                                extra: widget.user);
                           } else {
                             print(
                                 'Failed to download image: ${response.statusCode}');
@@ -321,13 +346,15 @@ class _MessageCardState extends State<MessageCard> {
                     ),
 
               //edit option
-              if (widget.messages.type == Type.text && isMe)
+              if (widget.messages.type == MsgType.text && isMe)
                 _OptionItem(
                     icon: const Icon(Icons.edit, color: Colors.blue, size: 26),
                     name: 'Edit Message',
                     onTap: () {
                       //for hiding bottom sheet
-                      Navigator.pop(context);
+                      Navigator.of(context).pop();
+                      context.goNamed(RouteNames.chatterScreen,
+                          extra: widget.user);
 
                       _showMessageUpdateDialog();
                     }),
@@ -341,7 +368,9 @@ class _MessageCardState extends State<MessageCard> {
                     onTap: () async {
                       await APIs.deleteMessage(widget.messages).then((value) {
                         //for hiding bottom sheet
-                        Navigator.pop(context);
+                        Navigator.of(context).pop();
+                        context.goNamed(RouteNames.chatterScreen,
+                            extra: widget.user);
                       });
                     }),
 

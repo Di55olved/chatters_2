@@ -24,28 +24,28 @@ class MyRouter {
               name: RouteNames.splashScreen,
               path: '/',
               builder: (BuildContext context, GoRouterState state) {
-                return SplashScreen(userRepository: userRepository);
+                return SplashScreen(userRepository: userRepository, msgRepository: msgRepository);
               },
             ),
             GoRoute(
               name: RouteNames.signIn,
               path: '/sign-in',
               builder: (BuildContext context, GoRouterState state) {
-                return SignInPage(userRepository: userRepository);
+                return SignInPage(userRepository: userRepository, msgRepository: msgRepository);
               },
             ),
             GoRoute(
               name: RouteNames.homeScreen,
               path: '/home',
               builder: (BuildContext context, GoRouterState state) {
-                return HomeScreen(userRepository: userRepository);
+                return HomeScreen(userRepository: userRepository, msgRepository: msgRepository);
               },
             ),
             GoRoute(
               name: RouteNames.signUp,
               path: '/sign-up',
               builder: (BuildContext context, GoRouterState state) {
-                return SignUpPage(userRepository: userRepository);
+                return SignUpPage(userRepository: userRepository, msgRepository: msgRepository);
               },
             ),
             GoRoute(
@@ -70,6 +70,7 @@ class MyRouter {
                   pass: passValue,
                   confPass: confPassValue,
                   userRepository: userRepository,
+                  msgRepository: msgRepository,
                 );
               },
             ),
@@ -78,7 +79,7 @@ class MyRouter {
               path: '/chatter-screen',
               builder: (BuildContext context, GoRouterState state) {
                 final Cuser user = state.extra as Cuser;
-                return ChatterScreen(user: user);
+                return ChatterScreen(user: user, msgRepository: msgRepository,);
               },
             ),
             GoRoute(
@@ -87,7 +88,7 @@ class MyRouter {
               builder: (BuildContext context, GoRouterState state) {
                 final Cuser user = state.extra as Cuser;
                 return ProfileScreen(
-                    userRepository: userRepository, user: user);
+                    userRepository: userRepository, user: user, msgRepository: msgRepository);
               },
             ),
             GoRoute(

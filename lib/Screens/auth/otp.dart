@@ -2,6 +2,7 @@
 import "dart:async";
 
 import "package:chatters_2/Navigaitions/routes_names.dart";
+import "package:chatters_2/core/repository/message_repo.dart";
 import "package:chatters_2/core/repository/user_repo.dart";
 import "package:email_otp/email_otp.dart";
 import "package:flutter/material.dart";
@@ -12,6 +13,7 @@ import "package:go_router/go_router.dart";
 
 class OTPHandler extends StatefulWidget {
   final UserRepository userRepository;
+  final MsgRepository msgRepository;
   final String name;
   final String imageURL;
   final String email;
@@ -20,15 +22,15 @@ class OTPHandler extends StatefulWidget {
 
   EmailOTP myOTP = EmailOTP();
 
-  OTPHandler({
-    super.key,
-    required this.userRepository,
-    required this.name,
-    required this.imageURL,
-    required this.email,
-    required this.pass,
-    required this.confPass,
-  });
+  OTPHandler(
+      {super.key,
+      required this.userRepository,
+      required this.name,
+      required this.imageURL,
+      required this.email,
+      required this.pass,
+      required this.confPass,
+      required this.msgRepository});
 
   @override
   State<OTPHandler> createState() => _OTPHandlerState();
@@ -113,8 +115,8 @@ class _OTPHandlerState extends State<OTPHandler> {
                               email: widget.email, password: widget.pass);
                           await APIs.createChatter(
                               name: widget.name, imageURL: widget.imageURL);
-                         context.goNamed(RouteNames.homeScreen,
-                                extra: widget.userRepository);
+                          context.goNamed(RouteNames.homeScreen,
+                              extra: widget.userRepository);
                         } else {
                           ScaffoldMessenger.of(context)
                               .showSnackBar(const SnackBar(

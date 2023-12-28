@@ -1,14 +1,13 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, avoid_print
 
 import 'dart:io';
 import 'package:chatters_2/API/api.dart';
 import 'package:chatters_2/Models/user.dart';
 import 'package:chatters_2/Navigaitions/routes_names.dart';
 import 'package:chatters_2/Widgets/my_assets.dart';
+import 'package:chatters_2/core/repository/message_repo.dart';
 import 'package:chatters_2/core/repository/user_repo.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -16,9 +15,14 @@ import '../Support/dialogs.dart';
 
 class ProfileScreen extends StatefulWidget {
   final UserRepository userRepository;
+  final MsgRepository msgRepository;
   final Cuser user;
-  const ProfileScreen(
-      {super.key, required this.user, required this.userRepository});
+  const ProfileScreen({
+    super.key,
+    required this.user,
+    required this.userRepository,
+    required this.msgRepository,
+  });
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -27,6 +31,23 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   final _formKey = GlobalKey<FormState>();
   String? _image;
+
+  @override
+  void initState() {
+    _image = widget.user.image;
+
+    super.initState();
+  }
+
+  ImageProvider _buildNetworkImage(String imageUrl) {
+    try {
+      return NetworkImage(imageUrl);
+    } catch (e) {
+      print("Error loading image: $e");
+      return NetworkImage("https://picsum.photos/200/300?grayscale");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -84,42 +105,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: CircleAvatar(
                     backgroundColor: Colors.white,
                     child: Stack(children: [
-                      _image != null
-                          ?
-                          //local image
-
-                          ClipRRect(
-                              borderRadius: BorderRadius.circular(
-                                  MediaQuery.sizeOf(context).height * .1),
-                              child: Image.file(File(_image!),
-                                  width: MediaQuery.sizeOf(context).height * .2,
-                                  height:
-                                      MediaQuery.sizeOf(context).height * .2,
-                                  fit: BoxFit.cover))
-                          :
-
-                          //user profile picture
-                          ClipRRect(
-                              borderRadius: BorderRadius.circular(
-                                  MediaQuery.sizeOf(context).height * .1),
-                              child: CachedNetworkImage(
-                                width: MediaQuery.sizeOf(context).height * .2,
-                                height: MediaQuery.sizeOf(context).height * .2,
-                                fit: BoxFit.cover,
-                                imageUrl: widget.user.image!,
-                                errorWidget: (context, url, error) =>
-                                    CircleAvatar(
-                                        child: Icon(
-                                  CupertinoIcons.person,
-                                  color: APIs.orange,
-                                )),
-                              ),
-                            ),
+                      CircleAvatar(
+                        radius: 50.0,
+                        backgroundImage: _buildNetworkImage(_image.toString()),
+                        backgroundColor: Colors.transparent,
+                        foregroundColor: Colors.transparent,
+                      ),
                       Positioned(
-                        bottom: 0,
-                        left: 0,
+                        bottom: -5,
+                        left: -20,
                         child: MaterialButton(
-                          elevation: 1,
+                          elevation: 2,
                           onPressed: () {
                             _showBottomSheet();
                           },

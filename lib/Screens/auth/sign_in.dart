@@ -4,6 +4,7 @@ import 'package:chatters_2/API/api.dart';
 import 'package:chatters_2/Navigaitions/routes_names.dart';
 import 'package:chatters_2/Screens/auth/sign_up.dart';
 import 'package:chatters_2/Widgets/my_assets.dart';
+import 'package:chatters_2/core/repository/message_repo.dart';
 import 'package:chatters_2/core/repository/user_repo.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +17,12 @@ Color orange = const Color.fromARGB(255, 241, 89, 70);
 
 class SignInPage extends StatefulWidget {
   final UserRepository userRepository;
-  const SignInPage({super.key, required this.userRepository});
+  final MsgRepository msgRepository;
+  const SignInPage({
+    super.key,
+    required this.userRepository,
+    required this.msgRepository,
+  });
   @override
   State<SignInPage> createState() => _SignInPageState();
 }
@@ -151,6 +157,7 @@ class _SignInPageState extends State<SignInPage> {
                               ),
                             );
                           } catch (e) {
+                            print(e);
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content:
