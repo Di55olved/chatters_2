@@ -101,13 +101,17 @@ class _SignUpPageState extends State<SignUpPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(color: APIs.purple),
+        decoration: BoxDecoration(
+            gradient: LinearGradient(
+                colors: [APIs.purple, Colors.pink, APIs.purple],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter)),
         child: ListView(
           children: [
             //iRent Logo
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: MyAssets.logo,
+              child: MyAssets.transLogo,
             ),
             Padding(
               padding: const EdgeInsets.all(32.0),
@@ -118,7 +122,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     Text(
                       "Sign Up",
                       style: TextStyle(
-                        color: APIs.orange,
+                        color: APIs.yellow,
                         fontSize: 25.0,
                         fontWeight: FontWeight.bold,
                       ),
@@ -288,16 +292,6 @@ class _SignUpPageState extends State<SignUpPage> {
                             if ((passValue == confPassValue) &&
                                 (passValue != '') &&
                                 (confPassValue != '')) {
-                              // Navigator.pushReplacement(
-                              //     context,
-                              //     MaterialPageRoute(
-                              //         builder: (context) => OTPHandler(
-                              // {'name': nameValue,
-                              // 'imgaeURL': imageURLValue,
-                              // 'email': emailValue,
-                              // 'pass': passValue,
-                              // 'confPass': confPassValue, userRepository: widget.userRepository},
-                              //             )));
                               context.goNamed(RouteNames.otp,
                                   queryParameters: {
                                     'name': nameValue,

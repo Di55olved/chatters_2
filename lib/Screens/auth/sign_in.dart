@@ -1,4 +1,5 @@
-import 'dart:developer';
+// ignore_for_file: use_build_context_synchronously, avoid_print, duplicate_ignore
+
 import 'package:chatters_2/API/api.dart';
 import 'package:chatters_2/Navigaitions/routes_names.dart';
 import 'package:chatters_2/Screens/auth/sign_up.dart';
@@ -15,7 +16,7 @@ Color orange = const Color.fromARGB(255, 241, 89, 70);
 
 class SignInPage extends StatefulWidget {
   final UserRepository userRepository;
-  const SignInPage({Key? key, required this.userRepository}) : super(key: key);
+  const SignInPage({super.key, required this.userRepository});
   @override
   State<SignInPage> createState() => _SignInPageState();
 }
@@ -33,13 +34,17 @@ class _SignInPageState extends State<SignInPage> {
     return Consumer<APIs>(
       builder: (context, obj, child) => Scaffold(
         body: Container(
-          decoration: BoxDecoration(color: purple),
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
+                  colors: [purple, Colors.pink, purple],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter)),
           child: ListView(
             children: <Widget>[
               //iRent Logo image
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: MyAssets.logo,
+                child: MyAssets.transLogo,
               ),
               Padding(
                 padding: const EdgeInsets.all(32.0),
@@ -50,7 +55,7 @@ class _SignInPageState extends State<SignInPage> {
                     Text(
                       "Log In",
                       style: TextStyle(
-                        color: orange,
+                        color: yellow,
                         fontSize: 25.0,
                         fontWeight: FontWeight.bold,
                       ),
@@ -130,7 +135,6 @@ class _SignInPageState extends State<SignInPage> {
                             await APIs.auth.signInWithEmailAndPassword(
                                 email: emailValue, password: passValue);
                             //Navigate to HomeScreen if Sign In was successful
-                            // ignore: use_build_context_synchronously
                             context.goNamed(RouteNames.homeScreen,
                                 extra: widget.userRepository);
                             //Display the exceptions
@@ -183,7 +187,8 @@ class _SignInPageState extends State<SignInPage> {
                         ),
                         InkWell(
                           onTap: () {
-                            context.goNamed(RouteNames.signUp, extra: widget.userRepository);
+                            context.goNamed(RouteNames.signUp,
+                                extra: widget.userRepository);
                           },
                           child: Text(
                             "Sign Up",
@@ -265,15 +270,7 @@ class _SignInPageState extends State<SignInPage> {
                                                     duration:
                                                         Duration(seconds: 2),
                                                   ));
-                                                  Navigator.of(context)
-                                                      .pushReplacement(
-                                                          MaterialPageRoute(
-                                                              builder:
-                                                                  (context) =>
-                                                                      SignInPage(
-                                                                        userRepository:
-                                                                            widget.userRepository,
-                                                                      )));
+                                                  Navigator.of(context).pop();
                                                 } else {
                                                   ScaffoldMessenger.of(context)
                                                       .showSnackBar(
@@ -285,7 +282,7 @@ class _SignInPageState extends State<SignInPage> {
                                                   ));
                                                 }
                                               } on FirebaseAuthException catch (e) {
-                                                log('$e');
+                                                print('$e');
                                                 ScaffoldMessenger.of(context)
                                                     .showSnackBar(SnackBar(
                                                   content: Text("$e"),
