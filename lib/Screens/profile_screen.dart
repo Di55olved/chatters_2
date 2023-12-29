@@ -89,6 +89,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     backgroundColor: Colors.white,
                     child: Stack(children: [
                       CircleAvatar(
+                        key: UniqueKey(),
                         radius: 50.0,
                         backgroundImage: APIs.buildNetworkImage(widget.user),
                         backgroundColor: Colors.transparent,
@@ -226,6 +227,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             source: ImageSource.gallery, imageQuality: 80);
                         if (image != null) {
                           APIs.updateProfilePicture(File(image.path));
+
                           // for hiding bottom sheet
                           Navigator.pop(context);
                         }

@@ -38,12 +38,14 @@ class _ChatterScreenState extends State<ChatterScreen> {
   //Cuser currentUser = APIs.user.uid;
   List<Messages> _msglist = [];
   late MsgBloc _msgBloc;
+  late ScrollController _scrollController;
 
   @override
   void initState() {
     super.initState();
     _msgBloc = MsgBloc(msgRepository: widget.msgRepository);
     _msgBloc.add(FetchMsg(user: widget.user));
+    _scrollController = ScrollController();
     APIs.getSelfInfo();
   }
 
@@ -106,19 +108,29 @@ class _ChatterScreenState extends State<ChatterScreen> {
                                   _msglist = snapshot.data!.docs
                                       .map((doc) => Messages.fromJson(
                                           doc.data() as Map<String, dynamic>))
-                                      .toList(); // ??
-                                  //[];
+                                      .toList();
+
+                                  // Handle empty list
                                   if (_msglist.isEmpty) {
-                                    // Handle empty list
                                     return const Center(
                                       child: Text(
                                         "Say Hi 👋",
                                         style: TextStyle(fontSize: 30),
                                       ),
                                     );
+                                  } else {
+                                    //Scroll Down to the last message
+                                    //Also works when a new message is loaded
+                                    _scrollController.animateTo(
+                                      0.0,
+                                      duration:
+                                          const Duration(milliseconds: 300),
+                                      curve: Curves.easeOut,
+                                    );
                                   }
 
                                   return ListView.builder(
+                                    controller: _scrollController,
                                     reverse: true,
                                     itemCount: _msglist.length,
                                     itemBuilder: (context, index) {

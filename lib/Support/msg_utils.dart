@@ -1,15 +1,24 @@
 import 'package:flutter/material.dart';
 
 class MessageUtils {
+  static List<String> messageParts = [];
+  static List<String> displayedParts = [];
+  static bool showReadMore = false;
+  // Function to show the next part of the message
+  static void showNextPart(List<String> messageParts,
+      List<String> displayedParts, bool showReadMore) {
+    if (messageParts.isNotEmpty) {
+      displayedParts.add(messageParts.removeAt(0));
+      showReadMore = messageParts.isNotEmpty;
+    }
+  }
+
   static void expandableMessageCard(
     String messageText,
     Function(String) updateMessage,
     BuildContext context,
   ) {
-    final int chunkSize = 200;
-    List<String> messageParts = [];
-    List<String> displayedParts = [];
-    bool showReadMore = false;
+    const int chunkSize = 200;
 
     int startPos = 0;
 
@@ -24,24 +33,14 @@ class MessageUtils {
       startPos += chunkSize;
     }
 
-    // Function to show the next part of the message
-    void showNextPart() {
-      if (messageParts.isNotEmpty) {
-        displayedParts.add(messageParts.removeAt(0));
-        showReadMore = messageParts.isNotEmpty;
-      }
-    }
-
     // Initial call to show the first part
-    showNextPart();
+    showNextPart(messageParts, displayedParts, showReadMore);
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          contentPadding: const EdgeInsets.all(16.0),
-          title: const Text('Expanded Message'),
-          content: SingleChildScrollView(
+        return Dialog(
+          child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -53,8 +52,9 @@ class MessageUtils {
                 if (showReadMore)
                   TextButton(
                     onPressed: () {
-                      showNextPart();
-                      updateMessage(messageText); // Perform any action on update
+                      showNextPart(messageParts, displayedParts, showReadMore);
+                      updateMessage(
+                          messageText); // Perform any action on update
                     },
                     child: const Text('Read More'),
                   ),
