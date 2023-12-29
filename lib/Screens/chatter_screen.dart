@@ -284,17 +284,23 @@ class _ChatterScreenState extends State<ChatterScreen> {
                       icon: Icon(Icons.emoji_emotions,
                           color: APIs.orange, size: 26)),
                   Expanded(
+                      child: SizedBox(
+                    height: 50,
+                    child: SingleChildScrollView(
                       child: TextField(
-                    controller: _textController,
-                    keyboardType: TextInputType.multiline,
-                    onTap: () {
-                      if (_showEmoji) setState(() => _showEmoji = !_showEmoji);
-                    },
-                    maxLines: null,
-                    decoration: InputDecoration(
-                        hintText: 'Type Something...',
-                        hintStyle: TextStyle(color: APIs.orange),
-                        border: InputBorder.none),
+                        controller: _textController,
+                        keyboardType: TextInputType.multiline,
+                        onTap: () {
+                          if (_showEmoji)
+                            setState(() => _showEmoji = !_showEmoji);
+                        },
+                        maxLines: null,
+                        decoration: InputDecoration(
+                            hintText: 'Type Something...',
+                            hintStyle: TextStyle(color: APIs.orange),
+                            border: InputBorder.none),
+                      ),
+                    ),
                   )),
                   IconButton(
                       onPressed: () async {

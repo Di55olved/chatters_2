@@ -150,10 +150,12 @@ class _MessageCardState extends State<MessageCard> {
             child: widget.messages.type == MsgType.text
                 ?
                 //show text
-                Text(
-                    widget.messages.msg,
-                    style: const TextStyle(fontSize: 15, color: Colors.black87),
-                  )
+                expandableMessageCard(widget.messages.msg)
+
+                // Text(
+                //     widget.messages.msg,
+                //     style: const TextStyle(fontSize: 15, color: Colors.black87),
+                //   )
                 :
                 //show image
                 ClipRRect(
@@ -179,6 +181,44 @@ class _MessageCardState extends State<MessageCard> {
       ],
     );
   }
+
+Widget expandableMessageCard(String messageText) {
+  final maxLengthToShow = 200;
+
+  if (messageText.length > maxLengthToShow) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          messageText.substring(0, maxLengthToShow) + '...',
+          style: const TextStyle(fontSize: 15, color: Colors.black87),
+        ),
+        TextButton(
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (_) => AlertDialog(
+                content: SingleChildScrollView(
+                  child: Text(
+                    messageText,
+                    style: const TextStyle(fontSize: 15, color: Colors.black87),
+                  ),
+                ),
+              ),
+            );
+          },
+          child: const Text('Read More'),
+        ),
+      ],
+    );
+  } else {
+    return Text(
+      messageText,
+      style: const TextStyle(fontSize: 15, color: Colors.black87),
+    );
+  }
+}
+
 
   //dialog for updating message content
   void _showMessageUpdateDialog() {

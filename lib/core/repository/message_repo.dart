@@ -1,8 +1,8 @@
 import 'dart:io';
 
-import 'package:chatters_2/Core/message_api_client.dart';
 import 'package:chatters_2/Models/messages.dart';
 import 'package:chatters_2/Models/user.dart';
+import 'package:chatters_2/core/message_api_client.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MsgRepository {
