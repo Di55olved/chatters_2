@@ -182,43 +182,43 @@ class _MessageCardState extends State<MessageCard> {
     );
   }
 
-Widget expandableMessageCard(String messageText) {
-  final maxLengthToShow = 200;
+  Widget expandableMessageCard(String messageText) {
+    final maxLengthToShow = 200;
 
-  if (messageText.length > maxLengthToShow) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          messageText.substring(0, maxLengthToShow) + '...',
-          style: const TextStyle(fontSize: 15, color: Colors.black87),
-        ),
-        TextButton(
-          onPressed: () {
-            showDialog(
-              context: context,
-              builder: (_) => AlertDialog(
-                content: SingleChildScrollView(
-                  child: Text(
-                    messageText,
-                    style: const TextStyle(fontSize: 15, color: Colors.black87),
+    if (messageText.length > maxLengthToShow) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            messageText.substring(0, maxLengthToShow) + '...',
+            style: const TextStyle(fontSize: 15, color: Colors.black87),
+          ),
+          TextButton(
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (_) => AlertDialog(
+                  content: SingleChildScrollView(
+                    child: Text(
+                      messageText,
+                      style:
+                          const TextStyle(fontSize: 15, color: Colors.black87),
+                    ),
                   ),
                 ),
-              ),
-            );
-          },
-          child: const Text('Read More'),
-        ),
-      ],
-    );
-  } else {
-    return Text(
-      messageText,
-      style: const TextStyle(fontSize: 15, color: Colors.black87),
-    );
+              );
+            },
+            child: const Text('Read More'),
+          ),
+        ],
+      );
+    } else {
+      return Text(
+        messageText,
+        style: const TextStyle(fontSize: 15, color: Colors.black87),
+      );
+    }
   }
-}
-
 
   //dialog for updating message content
   void _showMessageUpdateDialog() {
@@ -425,14 +425,6 @@ Widget expandableMessageCard(String messageText) {
                   icon: const Icon(Icons.remove_red_eye, color: Colors.blue),
                   name:
                       'Sent At: ${MyDateUtil.getMessageTime(context: context, time: widget.messages.sent)}',
-                  onTap: () {}),
-
-              //read time
-              _OptionItem(
-                  icon: const Icon(Icons.remove_red_eye, color: Colors.green),
-                  name: widget.messages.read.isEmpty
-                      ? 'Read At: Not seen yet'
-                      : 'Read At: ${MyDateUtil.getMessageTime(context: context, time: widget.messages.read)}',
                   onTap: () {}),
             ],
           );
