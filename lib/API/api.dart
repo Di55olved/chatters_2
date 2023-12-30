@@ -344,6 +344,23 @@ class APIs extends ChangeNotifier {
     await sendMessage(chatUser, imageUrl, MsgType.image);
   }
 
+  //upload voice recording 
+  static Future<void> uploadAudio(Cuser chatUser, File file) async {
+    final ext = file.path.split('.').last;
+ // File audioFile = File(file);
+  final ref = storage.ref().child('audio/${getConversationID(chatUser.id!)}/${DateTime.now().microsecondsSinceEpoch}.$ext');
+
+  await ref.putFile(file, SettableMetadata(contentType: 'audio/$ext'))
+  .then((p0) {
+      print('Data Transferred: ${p0.bytesTransferred / 1000} kb');
+    });
+
+  String audioURL = await ref.getDownloadURL();
+    await sendMessage(chatUser, audioURL, MsgType.audio);
+  
+}
+
+
   // for getting specific user info
   static Stream<QuerySnapshot<Map<String, dynamic>>> getUserInfo(
       Cuser chatUser) {

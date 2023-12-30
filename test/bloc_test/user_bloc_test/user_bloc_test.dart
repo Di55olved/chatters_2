@@ -2,6 +2,8 @@ import 'package:chatters_2/Models/user.dart';
 import 'package:chatters_2/bloc/user_bloc/user_bloc.dart';
 import 'package:chatters_2/bloc/user_bloc/user_events.dart';
 import 'package:chatters_2/bloc/user_bloc/user_states.dart';
+import 'package:chatters_2/core/network.dart';
+import 'package:chatters_2/core/repository/user_repo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'user_repo_moc.dart';
@@ -39,3 +41,4 @@ void main() {
             ]));
   });
 }
+

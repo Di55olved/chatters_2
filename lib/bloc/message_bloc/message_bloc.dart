@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'package:chatters_2/API/api.dart';
+import 'package:chatters_2/Models/user.dart';
 import 'package:chatters_2/core/repository/message_repo.dart';
 import 'package:chatters_2/bloc/message_bloc/message_event.dart';
 import 'package:chatters_2/bloc/message_bloc/message_states.dart';
@@ -23,6 +24,11 @@ class MsgBloc extends Bloc<MsgEvent, MsgState> {
     on<SendImgMessage>((event, emit) async {
       await _sendImgMessages(event.user, event.file, emit);
     });
+
+        on<SendVoiceMessage>((event, emit) async {
+      await _sendVoiceMessage(event.user, event.file, emit);
+    });
+
   }
 
   Future<void> _getMessages(user, emit) async {
@@ -79,7 +85,7 @@ class MsgBloc extends Bloc<MsgEvent, MsgState> {
   }
 
   Future<void> _sendImgMessages(user, file, emit) async {
-    emit(MsgImgLoading());
+    //emit(MsgImgLoading());
     try {
       bool check = await FirebaseFirestore.instance
           .collection('users')
@@ -117,4 +123,44 @@ class MsgBloc extends Bloc<MsgEvent, MsgState> {
       emit(MsgError(errorMsg: 'Unknown error occurred'));
     }
   }
+
+   Future<void> _sendVoiceMessage(user,file,emit) async {
+        try {
+      bool check = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.id)
+          .collection('my_users')
+          .doc(APIs.auth.currentUser!.uid)
+          .get()
+          .then((DocumentSnapshot documentSnapshot) => documentSnapshot.exists);
+      if (check == false) {
+        final userData = await APIs.firestore
+            .collection("users")
+            .doc(APIs.auth.currentUser!.uid)
+            .get();
+
+        await APIs.firestore
+            .collection('users')
+            .doc(user.id)
+            .collection("my_users")
+            .doc(APIs.auth.currentUser!.uid)
+            .set(userData.data()!);
+
+        await msgRepository.sendVoiceMsg(user, file);
+        final Stream<QuerySnapshot<Map<String, dynamic>>> messages =
+            await msgRepository.getMsg(user); // Fetch updated messages
+        emit(MsgLoaded(messages: messages));
+      } else {
+        await msgRepository.sendVoiceMsg(user, file);
+        final Stream<QuerySnapshot<Map<String, dynamic>>> messages =
+            await msgRepository.getMsg(user); // Fetch updated messages
+        emit(MsgLoaded(messages: messages));
+      }
+    } on FirebaseException catch (e) {
+      emit(MsgError(errorMsg: e.message ?? 'Error fetching messages'));
+    } catch (e) {
+      emit(MsgError(errorMsg: 'Unknown error occurred'));
+    }
+
+   }
 }

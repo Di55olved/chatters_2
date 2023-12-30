@@ -115,9 +115,11 @@ class _ChatterCardState extends State<ChatterCard> {
                   ),
                   subtitle: Text(
                     _message != null
-                        ? _message!.type == MsgType.image
-                            ? '📷 Image'
-                            : _message!.msg
+                        ? _message!.type == MsgType.image 
+                            ? '📷 Image' 
+                            : _message!.type == MsgType.image ?
+                            '🎤 Voice' :
+                            _message!.msg 
                         : widget.user.about!,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,

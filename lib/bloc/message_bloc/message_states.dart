@@ -12,7 +12,6 @@ class MsgEmpty extends MsgState {}
 
 class MsgLoading extends MsgState {}
 
-class MsgImgLoading extends MsgState{}
 
 class MsgLoaded extends MsgState {
   final Stream<QuerySnapshot<Map<String, dynamic>>> messages;
@@ -29,6 +28,10 @@ class SendingMsg extends MsgState {
 }
 
 class MsgSent extends MsgState {
+    final Stream<QuerySnapshot<Map<String, dynamic>>> messages;
+
+  MsgSent({required this.messages});
+
   @override
   List<Object> get props => [];
 }

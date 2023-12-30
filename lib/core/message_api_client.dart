@@ -63,6 +63,22 @@ class MessageApiClient {
     final imageUrl = await ref.getDownloadURL();
     await sendMessage(chatUser, imageUrl, MsgType.image);
   }
+
+  //upload voice recording 
+  Future<void> uploadAudio(Cuser chatUser, String file) async {
+    final ext = file.split('.').last;
+  File audioFile = File(file);
+  final ref = storage.ref().child('audio/${APIs.getConversationID(chatUser.id!)}/${DateTime.now().microsecondsSinceEpoch}.$ext');
+
+  await ref.putFile(audioFile, SettableMetadata(contentType: 'audio/$ext'))
+  .then((p0) {
+      print('Data Transferred: ${p0.bytesTransferred / 1000} kb');
+    });
+
+  String audioURL = await ref.getDownloadURL();
+    await sendMessage(chatUser, audioURL, MsgType.audio);
+  
+}
 }
 
    // // Method for sending images using the existing sendChatImage API

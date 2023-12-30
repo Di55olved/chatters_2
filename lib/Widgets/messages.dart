@@ -1,8 +1,10 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatters_2/Models/user.dart';
 import 'package:chatters_2/Navigaitions/routes_names.dart';
+import 'package:chatters_2/Support/audio_utils.dart';
 import 'package:chatters_2/Support/dialogs.dart';
 import 'package:flutter/material.dart';
 
@@ -10,21 +12,31 @@ import 'package:chatters_2/API/api.dart';
 import 'package:chatters_2/Models/messages.dart';
 import 'package:chatters_2/Support/data_utils.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 
 class MessageCard extends StatefulWidget {
-  const MessageCard({super.key, required this.messages, required this.user});
+  const MessageCard(
+      {super.key,
+      required this.messages,
+      required this.user,
+      required this.index});
 
   final Messages messages;
   final Cuser user;
+  final int index;
 
   @override
   State<MessageCard> createState() => _MessageCardState();
 }
 
 class _MessageCardState extends State<MessageCard> {
+  AudioController audioController = Get.put(AudioController());
+  AudioPlayer audioPlayer = AudioPlayer();
+
   @override
   Widget build(BuildContext context) {
     bool check = widget.messages.fromId == APIs.user.uid;
@@ -49,44 +61,53 @@ class _MessageCardState extends State<MessageCard> {
       children: [
         //message content
         Flexible(
-          child: Container(
-            padding: EdgeInsets.all(widget.messages.type == MsgType.image
-                ? MediaQuery.sizeOf(context).width * .03
-                : MediaQuery.sizeOf(context).width * .04),
-            margin: EdgeInsets.symmetric(
-                horizontal: MediaQuery.sizeOf(context).width * .04,
-                vertical: MediaQuery.sizeOf(context).height * .01),
-            decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 221, 245, 255),
-                border: Border.all(color: Colors.lightBlue),
-                //making borders curved
-                borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(30),
-                    topRight: Radius.circular(30),
-                    bottomRight: Radius.circular(30))),
-            child: widget.messages.type == MsgType.text
-                ?
-                //show text
-                Text(
-                    widget.messages.msg,
-                    style: const TextStyle(fontSize: 15, color: Colors.black87),
-                  )
-                :
-                //show image
-                ClipRRect(
-                    borderRadius: BorderRadius.circular(15),
-                    child: CachedNetworkImage(
-                      imageUrl: widget.messages.msg,
-                      placeholder: (context, url) => const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      ),
-                      errorWidget: (context, url, error) =>
-                          const Icon(Icons.image, size: 70),
-                    ),
-                  ),
-          ),
-        ),
+            child: Container(
+                padding: EdgeInsets.all(widget.messages.type == MsgType.image
+                    ? MediaQuery.sizeOf(context).width * .03
+                    : MediaQuery.sizeOf(context).width * .04),
+                margin: EdgeInsets.symmetric(
+                    horizontal: MediaQuery.sizeOf(context).width * .04,
+                    vertical: MediaQuery.sizeOf(context).height * .01),
+                decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 221, 245, 255),
+                    border: Border.all(color: Colors.lightBlue),
+                    //making borders curved
+                    borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(30),
+                        topRight: Radius.circular(30),
+                        bottomRight: Radius.circular(30))),
+                child: widget.messages.type == MsgType.text
+                    ? expandableMessageCard(widget.messages.msg)
+                    : widget.messages.type == MsgType.image
+                        ?
+                        //show image
+                        ClipRRect(
+                            borderRadius: BorderRadius.circular(15),
+                            child: CachedNetworkImage(
+                              imageUrl: widget.messages.msg,
+                              placeholder: (context, url) => const Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: Padding(
+                                    padding: EdgeInsets.all(8.0),
+                                    child: CircularProgressIndicator(
+                                        strokeWidth: 2),
+                                  ),
+                                ),
+                              ),
+                              errorWidget: (context, url, error) =>
+                                  const Icon(Icons.image, size: 70),
+                            ),
+                          )
+                        :
+                        //      if (messageChat.type == TypeMessage.audio)
+                        _audio(
+                            message: widget.messages.msg,
+                            isCurrentUser: widget.messages.fromId == APIs.me.id,
+                            index: widget.index,
+                            time: widget.messages.sent,
+                            duration: DateTime.now().toString()))),
 
         //message time
         Padding(
@@ -114,12 +135,12 @@ class _MessageCardState extends State<MessageCard> {
             SizedBox(width: MediaQuery.sizeOf(context).width * .04),
 
             //double tick blue icon for message read
-            Icon(Icons.done_all_rounded,
-                color:
-                    widget.messages.read.isNotEmpty ? Colors.blue : Colors.grey,
-                size: 20),
-            //for adding some space
-            const SizedBox(width: 2),
+            // Icon(Icons.done_all_rounded,
+            //     color:
+            //         widget.messages.read.isNotEmpty ? Colors.blue : Colors.grey,
+            //     size: 20),
+            // //for adding some space
+            // const SizedBox(width: 2),
 
             //sent time
             Text(
@@ -132,93 +153,94 @@ class _MessageCardState extends State<MessageCard> {
 
         //message content
         Flexible(
-          child: Container(
-            padding: EdgeInsets.all(widget.messages.type == MsgType.image
-                ? MediaQuery.sizeOf(context).width * .03
-                : MediaQuery.sizeOf(context).width * .04),
-            margin: EdgeInsets.symmetric(
-                horizontal: MediaQuery.sizeOf(context).width * .04,
-                vertical: MediaQuery.sizeOf(context).height * .01),
-            decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 218, 255, 176),
-                border: Border.all(color: Colors.lightGreen),
-                //making borders curved
-                borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(30),
-                    topRight: Radius.circular(30),
-                    bottomLeft: Radius.circular(30))),
-            child: widget.messages.type == MsgType.text
-                ?
-                //show text
-                expandableMessageCard(widget.messages.msg)
+            child: Container(
+                padding: EdgeInsets.all(widget.messages.type == MsgType.image
+                    ? MediaQuery.sizeOf(context).width * .03
+                    : MediaQuery.sizeOf(context).width * .04),
+                margin: EdgeInsets.symmetric(
+                    horizontal: MediaQuery.sizeOf(context).width * .04,
+                    vertical: MediaQuery.sizeOf(context).height * .01),
+                decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 218, 255, 176),
+                    border: Border.all(color: Colors.lightGreen),
+                    //making borders curved
+                    borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(30),
+                        topRight: Radius.circular(30),
+                        bottomLeft: Radius.circular(30))),
+                child: widget.messages.type == MsgType.text
+                    ? expandableMessageCard(widget.messages.msg)
+                    : widget.messages.type == MsgType.image
+                        ?
+                        //show image
+                        ClipRRect(
+                            borderRadius: BorderRadius.circular(15),
+                            child: CachedNetworkImage(
+                              imageUrl: widget.messages.msg,
+                              placeholder: (context, url) => const Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: Padding(
+                                    padding: EdgeInsets.all(8.0),
+                                    child: CircularProgressIndicator(
+                                        strokeWidth: 2),
+                                  ),
+                                ),
+                              ),
+                              errorWidget: (context, url, error) =>
+                                  const Icon(Icons.image, size: 70),
+                            ),
+                          )
+                        :
+                        //      if (messageChat.type == TypeMessage.audio)
+                        _audio(
+                            message: widget.messages.msg,
+                            isCurrentUser: widget.messages.fromId == APIs.me.id,
+                            index: widget.index,
+                            time: widget.messages.sent,
+                            duration: DateTime.now().toString()))),
+      ],
+    );
+  }
 
-                // Text(
-                //     widget.messages.msg,
-                //     style: const TextStyle(fontSize: 15, color: Colors.black87),
-                //   )
-                :
-                //show image
-                ClipRRect(
-                    borderRadius: BorderRadius.circular(15),
-                    child: CachedNetworkImage(
-                      imageUrl: widget.messages.msg,
-                      placeholder: (context, url) => const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          ),
-                        ),
-                      ),
-                      errorWidget: (context, url, error) =>
-                          const Icon(Icons.image, size: 70),
+  Widget expandableMessageCard(String messageText) {
+    final maxLengthToShow = 200;
+
+    if (messageText.length > maxLengthToShow) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            messageText.substring(0, maxLengthToShow) + '...',
+            style: const TextStyle(fontSize: 15, color: Colors.black87),
+          ),
+          TextButton(
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (_) => AlertDialog(
+                  content: SingleChildScrollView(
+                    child: Text(
+                      messageText,
+                      style:
+                          const TextStyle(fontSize: 15, color: Colors.black87),
                     ),
                   ),
-          ),
-        ),
-      ],
-    );
-  }
-
-Widget expandableMessageCard(String messageText) {
-  final maxLengthToShow = 200;
-
-  if (messageText.length > maxLengthToShow) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          messageText.substring(0, maxLengthToShow) + '...',
-          style: const TextStyle(fontSize: 15, color: Colors.black87),
-        ),
-        TextButton(
-          onPressed: () {
-            showDialog(
-              context: context,
-              builder: (_) => AlertDialog(
-                content: SingleChildScrollView(
-                  child: Text(
-                    messageText,
-                    style: const TextStyle(fontSize: 15, color: Colors.black87),
-                  ),
                 ),
-              ),
-            );
-          },
-          child: const Text('Read More'),
-        ),
-      ],
-    );
-  } else {
-    return Text(
-      messageText,
-      style: const TextStyle(fontSize: 15, color: Colors.black87),
-    );
+              );
+            },
+            child: const Text('Read More'),
+          ),
+        ],
+      );
+    } else {
+      return Text(
+        messageText,
+        style: const TextStyle(fontSize: 15, color: Colors.black87),
+      );
+    }
   }
-}
-
 
   //dialog for updating message content
   void _showMessageUpdateDialog() {
@@ -437,6 +459,83 @@ Widget expandableMessageCard(String messageText) {
             ],
           );
         });
+  }
+
+  Widget _audio({
+    required String message,
+    required bool isCurrentUser,
+    required int index,
+    required String time,
+    required String duration,
+  }) {
+    return Container(
+      width: MediaQuery.of(context).size.width * 0.5,
+      padding: EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: isCurrentUser ? APIs.orange : APIs.orange.withOpacity(0.18),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        children: [
+          GestureDetector(
+            onTap: () {
+              audioController.onPressedPlayButton(index, message);
+              // changeProg(duration: duration);
+            },
+            onSecondaryTap: () {
+              audioPlayer.stop();
+              //   audioController.completedPercentage.value = 0.0;
+            },
+            child: Obx(
+              () => (audioController.isRecordPlaying &&
+                      audioController.currentId == index)
+                  ? Icon(
+                      Icons.cancel,
+                      color: isCurrentUser ? Colors.white : APIs.orange,
+                    )
+                  : Icon(
+                      Icons.play_arrow,
+                      color: isCurrentUser ? Colors.white : APIs.orange,
+                    ),
+            ),
+          ),
+          Obx(
+            () => Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 0),
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  alignment: Alignment.center,
+                  children: [
+                    // Text(audioController.completedPercentage.value.toString(),style: TextStyle(color: Colors.white),),
+                    LinearProgressIndicator(
+                      minHeight: 5,
+                      backgroundColor: Colors.grey,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        isCurrentUser ? Colors.white : APIs.orange,
+                      ),
+                      value: (audioController.isRecordPlaying &&
+                              audioController.currentId == index)
+                          ? audioController.completedPercentage.value
+                          : audioController.totalDuration.value.toDouble(),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          SizedBox(
+            width: 10,
+          ),
+          Text(
+            duration,
+            style: TextStyle(
+                fontSize: 12,
+                color: isCurrentUser ? Colors.white : APIs.orange),
+          ),
+        ],
+      ),
+    );
   }
 }
 

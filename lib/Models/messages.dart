@@ -38,4 +38,4 @@ class Messages {
   }
 }
 
-enum MsgType { text, image }
+enum MsgType { text, image, audio }

@@ -21,4 +21,9 @@ class MsgRepository {
   Future<void> sendImgMsg(Cuser chatUser, File file) async {
     return messageApiClient.sendChatImage(chatUser, file);
   }
+
+  Future<void> sendVoiceMsg(Cuser chatUser,String file) {
+    return messageApiClient.uploadAudio(chatUser, file);
+    
+  }
 }

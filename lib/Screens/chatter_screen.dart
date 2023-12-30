@@ -2,6 +2,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_final_fields
 import 'dart:io';
 
+import 'package:chatters_2/Support/audio_utils.dart';
 import 'package:chatters_2/bloc/message_bloc/message_states.dart';
 import 'package:chatters_2/core/repository/message_repo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -19,6 +20,10 @@ import 'package:chatters_2/Support/data_utils.dart';
 import 'package:chatters_2/Widgets/messages.dart';
 import 'package:chatters_2/bloc/message_bloc/message_bloc.dart';
 import 'package:chatters_2/bloc/message_bloc/message_event.dart';
+import 'package:audioplayers/audioplayers.dart';
+import 'package:record/record.dart';
+import 'package:get/get.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class ChatterScreen extends StatefulWidget {
   final Cuser user;
@@ -39,6 +44,69 @@ class _ChatterScreenState extends State<ChatterScreen> {
   List<Messages> _msglist = [];
   late MsgBloc _msgBloc;
   late ScrollController _scrollController;
+  //AudioPlayer audioPlayer = AudioPlayer();
+  late AudioRecorder _audioRecorder;
+  bool _isRecording = false;
+  AudioController audioController = Get.put(AudioController());
+  AudioPlayer audioPlayer = AudioPlayer();
+
+  Future<void> startRecording() async {
+    try {
+      Map<Permission, PermissionStatus> statuses = await [
+        Permission.storage,
+      ].request();
+   //   var status = await Permission.storage.request();
+   //   var status2 = await Permission.audio.request();
+      if (statuses[Permission.storage] == PermissionStatus.granted) {
+    //    if (await _audioRecorder.hasPermission()) {
+          await _audioRecorder.start(
+              path: 'audio_${DateTime.now().millisecondsSinceEpoch}.m4a',
+              const RecordConfig());
+          setState(() {
+            _isRecording = true;
+          });
+        // } else {
+        //   // Handle permissions not granted for audio recording
+        //   print('Audio recorder permission denied');
+        //   setState(() {});
+        // }
+      // } else if (status.isDenied || status.isPermanentlyDenied) {
+      //   //    Handle permissions not granted for storage access
+      //   print('Storage permission denied');
+      //   o
+      //   setState(() {});
+      } else {
+        // Handle other permission statuses (like restricted, etc.)
+        print('Other permission status: $statuses');
+        openAppSettings();
+        setState(() {});
+      }
+    } catch (e) {
+      print("Error starting recording: $e");
+    }
+  }
+
+  Future<void> stopRecording() async {
+    if (_isRecording) {
+      final path = await _audioRecorder.stop();
+      print('audio path:${path}');
+      audioController.end.value = DateTime.now();
+      audioController.calcDuration();
+      var ap = AudioPlayer();
+      await Future.delayed(Duration(seconds: 1));
+      //  ap.onPlayerComplete.listen((a) {});
+      audioController.isRecording.value = false;
+      audioController.isSending.value = true;
+      setState(() {
+        _isRecording = false;
+      });
+      if (path != null) {
+        // _msgBloc
+        //     .add(SendVoiceMessage(widget.user, path));
+        APIs.uploadAudio(widget.user, File(path));
+      }
+    }
+  }
 
   @override
   void initState() {
@@ -47,6 +115,7 @@ class _ChatterScreenState extends State<ChatterScreen> {
     _msgBloc.add(FetchMsg(user: widget.user));
     _scrollController = ScrollController();
     APIs.getSelfInfo();
+    _audioRecorder = AudioRecorder();
   }
 
   final _textController = TextEditingController();
@@ -78,8 +147,16 @@ class _ChatterScreenState extends State<ChatterScreen> {
             body: Column(
               children: [
                 Expanded(
-                    child: BlocBuilder(
+                    child: BlocConsumer<MsgBloc, MsgState>(
                         bloc: _msgBloc,
+                        listener: (context, state) {
+                          if (state is MsgError) {
+                            Text(
+                              'Something went wrong!',
+                              style: TextStyle(color: Colors.red),
+                            );
+                          }
+                        },
                         builder: (_, MsgState state) {
                           if (state is MsgEmpty) {
                             return const Center(child: Text('Empty state'));
@@ -135,9 +212,9 @@ class _ChatterScreenState extends State<ChatterScreen> {
                                     itemCount: _msglist.length,
                                     itemBuilder: (context, index) {
                                       return MessageCard(
-                                        messages: _msglist[index],
-                                        user: widget.user,
-                                      );
+                                          messages: _msglist[index],
+                                          user: widget.user,
+                                          index: index);
                                     },
                                   );
                                 } else if (snapshot.hasError) {
@@ -156,16 +233,10 @@ class _ChatterScreenState extends State<ChatterScreen> {
                               },
                             );
                           }
-                          if (state is MsgError) {
-                            return const Text(
-                              'Something went wrong!',
-                              style: TextStyle(color: Colors.red),
-                            );
-                          }
                           return const SizedBox();
                         })),
                 if (_isUploading == true)
-                  Align(
+                  const Align(
                     alignment: Alignment.centerRight,
                     child: Padding(
                       padding:
@@ -197,7 +268,8 @@ class _ChatterScreenState extends State<ChatterScreen> {
                                 : 1.0), // Issue: https://github.com/flutter/flutter/issues/28894
                       ),
                     ),
-                  )
+                  ),
+                
               ],
             ),
           ),
@@ -285,80 +357,99 @@ class _ChatterScreenState extends State<ChatterScreen> {
             child: Card(
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15)),
-              child: Row(
-                children: [
-                  //emoji button
-                  IconButton(
-                      onPressed: () {
-                        FocusScope.of(context).unfocus();
-                        setState(() => _showEmoji = !_showEmoji);
+              child: Row(children: [
+                //emoji button
+                IconButton(
+                    onPressed: () {
+                      FocusScope.of(context).unfocus();
+                      setState(() => _showEmoji = !_showEmoji);
+                    },
+                    icon: Icon(Icons.emoji_emotions,
+                        color: APIs.orange, size: 26)),
+                Expanded(
+                    child: SizedBox(
+                  height: 50,
+                  child: SingleChildScrollView(
+                    child: TextField(
+                      controller: _textController,
+                      keyboardType: TextInputType.multiline,
+                      onTap: () {
+                        if (_showEmoji)
+                          setState(() => _showEmoji = !_showEmoji);
                       },
-                      icon: Icon(Icons.emoji_emotions,
-                          color: APIs.orange, size: 26)),
-                  Expanded(
-                      child: SizedBox(
-                    height: 50,
-                    child: SingleChildScrollView(
-                      child: TextField(
-                        controller: _textController,
-                        keyboardType: TextInputType.multiline,
-                        onTap: () {
-                          if (_showEmoji)
-                            setState(() => _showEmoji = !_showEmoji);
-                        },
-                        maxLines: null,
-                        decoration: InputDecoration(
-                            hintText: 'Type Something...',
-                            hintStyle: TextStyle(color: APIs.orange),
-                            border: InputBorder.none),
-                      ),
+                      maxLines: null,
+                      decoration: InputDecoration(
+                          hintText: _isRecording
+                              ? "Recording Audio..."
+                              : "Type Something...",
+                          hintStyle: TextStyle(color: APIs.orange),
+                          border: InputBorder.none),
                     ),
-                  )),
-                  IconButton(
-                      onPressed: () async {
-                        final ImagePicker picker = ImagePicker();
+                  ),
+                )),
+                IconButton(
+                    onPressed: () async {
+                      final ImagePicker picker = ImagePicker();
 
-                        // Pick an image
-                        final List<XFile> images =
-                            await picker.pickMultiImage(imageQuality: 70);
-                        for (var i in images) {
-                          //iterate post to firebase
-                          setState(() {
-                            _isUploading = true;
-                          });
-                          _msgBloc
-                              .add(SendImgMessage(widget.user, File(i.path)));
+                      // Pick an image
+                      final List<XFile> images =
+                          await picker.pickMultiImage(imageQuality: 70);
+                      for (var i in images) {
+                        //iterate post to firebase
+                        setState(() {
+                          _isUploading = true;
+                        });
+                        _msgBloc.add(SendImgMessage(widget.user, File(i.path)));
 
-                          setState(() {
-                            _isUploading = false;
-                          });
-                        }
-                      },
-                      icon: Icon(Icons.image, color: APIs.orange, size: 26)),
-                  IconButton(
-                      onPressed: () async {
-                        final ImagePicker picker = ImagePicker();
+                        setState(() {
+                          _isUploading = false;
+                        });
+                      }
+                    },
+                    icon: Icon(Icons.image, color: APIs.orange, size: 26)),
+                IconButton(
+                    onPressed: () async {
+                      final ImagePicker picker = ImagePicker();
 
-                        // Pick an image from camera
-                        final XFile? image = await picker.pickImage(
-                            source: ImageSource.camera, imageQuality: 70);
-                        if (image != null) {
-                          setState(() {
-                            _isUploading = true;
-                          });
+                      // Pick an image from camera
+                      final XFile? image = await picker.pickImage(
+                          source: ImageSource.camera, imageQuality: 70);
+                      if (image != null) {
+                        setState(() {
+                          _isUploading = true;
+                        });
 
-                          _msgBloc.add(
-                              SendImgMessage(widget.user, File(image.path)));
+                        _msgBloc
+                            .add(SendImgMessage(widget.user, File(image.path)));
 
-                          setState(() {
-                            _isUploading = false;
-                          });
-                        }
-                      },
-                      icon: Icon(Icons.camera_alt_rounded,
-                          color: APIs.orange, size: 26)),
-                ],
-              ),
+                        setState(() {
+                          _isUploading = false;
+                        });
+                      }
+                    },
+                    icon: Icon(Icons.camera_alt_rounded,
+                        color: APIs.orange, size: 26)),
+                GestureDetector(
+                  child: Icon(Icons.mic, color: APIs.orange),
+                  onLongPress: () async {
+                    var audioPlayer = AudioPlayer();
+
+                    await Future.delayed(Duration(seconds: 1));
+                    //  audioPlayer.onPlayerComplete.listen((a) {
+                    audioController.start.value = DateTime.now();
+                    startRecording();
+                    audioController.isRecording.value = true;
+                    //    });
+                  },
+                  onLongPressEnd: (details) {
+                    stopRecording();
+                  },
+                ),
+
+                SizedBox(
+                  width: 10,
+                )
+              ]),
             ),
           ),
           MaterialButton(
@@ -381,3 +472,25 @@ class _ChatterScreenState extends State<ChatterScreen> {
     );
   }
 }
+
+// class recDialog extends StatelessWidget {
+//   const recDialog({
+//     super.key,
+//   });
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   return AlertDialog(
+  //     title: const Text('Recording'),
+  //     content: const CircularProgressIndicator(),
+  //     actions: <Widget>[
+  //       FlatButton(
+  //         child: const Text('Cancel'),
+  //         onPressed: () {
+  //           Navigator.of(context).pop();
+  //         },
+  //       ),
+  //     ],
+  //   );
+  // }
+

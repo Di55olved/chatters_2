@@ -42,3 +42,14 @@ class SendImgMessage extends MsgEvent {
   @override
   List<Object?> get props => [user,file];
 }
+
+class SendVoiceMessage extends MsgEvent {
+  final Cuser user;
+  final String file;
+
+
+  SendVoiceMessage(this.user, this.file);
+
+  @override
+  List<Object?> get props => [user,file];
+}

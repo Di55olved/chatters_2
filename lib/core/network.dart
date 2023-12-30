@@ -40,6 +40,9 @@ class UserApiClient {
 
   
 
+}
+
+
   // Stream<QuerySnapshot<Map<String, dynamic>>> fetchUserMoc() {
   //   // Simulating the conversion of List<Cuser> to a Stream<QuerySnapshot>
   //   final List<Cuser> users = [
@@ -69,10 +72,3 @@ class UserApiClient {
   //     QuerySnapshotMetadata(hasPendingWrites: false), // Add metadata as needed
   //   )]);
   // }
-}
-
-class Endpoints {
-  static const baseUrl = 'https://jsonplaceholder.typicode.com';
-  static const String userUrl = '$baseUrl/todos';
-  static const productUrl = 'https://dummyjson.com/products';
-}
