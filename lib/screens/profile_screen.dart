@@ -1,17 +1,17 @@
 // ignore_for_file: use_build_context_synchronously, avoid_print
 
 import 'dart:io';
-import 'package:chatters_2/API/api.dart';
-import 'package:chatters_2/Models/user.dart';
-import 'package:chatters_2/Navigaitions/routes_names.dart';
-import 'package:chatters_2/Widgets/my_assets.dart';
+import 'package:chatters_2/api/api.dart';
+import 'package:chatters_2/models/user.dart';
+import 'package:chatters_2/navigaitions/routes_names.dart';
+import 'package:chatters_2/widgets/my_assets.dart';
 import 'package:chatters_2/core/repository/message_repo.dart';
 import 'package:chatters_2/core/repository/user_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../Support/dialogs.dart';
+import '../support/dialogs.dart';
 
 class ProfileScreen extends StatefulWidget {
   final UserRepository userRepository;

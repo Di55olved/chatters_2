@@ -1,6 +1,6 @@
 import 'package:bloc_test/bloc_test.dart';
-import 'package:chatters_2/Models/messages.dart';
-import 'package:chatters_2/Models/user.dart';
+import 'package:chatters_2/models/messages.dart';
+import 'package:chatters_2/models/user.dart';
 import 'package:chatters_2/bloc/message_bloc/message_bloc.dart';
 import 'package:chatters_2/bloc/message_bloc/message_event.dart';
 import 'package:chatters_2/bloc/message_bloc/message_states.dart';

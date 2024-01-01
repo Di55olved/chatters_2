@@ -2,11 +2,11 @@
 // ignore_for_file: use_build_context_synchronously, avoid_print
 
 import 'dart:typed_data';
-import 'package:chatters_2/API/api.dart';
+import 'package:chatters_2/api/api.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_gallery_saver/image_gallery_saver.dart';
-import 'package:chatters_2/Models/user.dart';
+import 'package:chatters_2/models/user.dart';
 
 class ProfileDialog extends StatelessWidget {
   const ProfileDialog({

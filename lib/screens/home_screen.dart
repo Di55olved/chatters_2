@@ -1,11 +1,11 @@
 import 'dart:developer';
 
-import 'package:chatters_2/API/api.dart';
-import 'package:chatters_2/Models/user.dart';
-import 'package:chatters_2/Navigaitions/routes_names.dart';
-import 'package:chatters_2/Support/dialogs.dart';
-import 'package:chatters_2/Widgets/chatter_card.dart';
-import 'package:chatters_2/Widgets/my_assets.dart';
+import 'package:chatters_2/api/api.dart';
+import 'package:chatters_2/models/user.dart';
+import 'package:chatters_2/navigaitions/routes_names.dart';
+import 'package:chatters_2/support/dialogs.dart';
+import 'package:chatters_2/widgets/chatter_card.dart';
+import 'package:chatters_2/widgets/my_assets.dart';
 import 'package:chatters_2/bloc/user_bloc/user_bloc.dart';
 import 'package:chatters_2/bloc/user_bloc/user_events.dart';
 import 'package:chatters_2/bloc/user_bloc/user_states.dart';

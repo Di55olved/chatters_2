@@ -1,4 +1,4 @@
-import 'package:chatters_2/Models/user.dart';
+import 'package:chatters_2/models/user.dart';
 import 'package:chatters_2/bloc/user_bloc/user_events.dart';
 import 'package:chatters_2/bloc/user_bloc/user_states.dart';
 import 'package:chatters_2/core/repository/user_repo.dart';

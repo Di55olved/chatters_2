@@ -1,4 +1,4 @@
-import 'package:chatters_2/Models/user.dart';
+import 'package:chatters_2/models/user.dart';
 import 'package:chatters_2/core/network.dart';
 import 'package:chatters_2/core/repository/user_repo.dart';
 import 'package:equatable/equatable.dart';

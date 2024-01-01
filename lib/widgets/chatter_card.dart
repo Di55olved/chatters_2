@@ -1,9 +1,9 @@
-import 'package:chatters_2/API/api.dart';
-import 'package:chatters_2/Models/messages.dart';
-import 'package:chatters_2/Models/user.dart';
-import 'package:chatters_2/Navigaitions/routes_names.dart';
-import 'package:chatters_2/Support/data_utils.dart';
-import 'package:chatters_2/Widgets/profile_dialog.dart';
+import 'package:chatters_2/api/api.dart';
+import 'package:chatters_2/models/messages.dart';
+import 'package:chatters_2/models/user.dart';
+import 'package:chatters_2/navigaitions/routes_names.dart';
+import 'package:chatters_2/support/data_utils.dart';
+import 'package:chatters_2/widgets/profile_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 

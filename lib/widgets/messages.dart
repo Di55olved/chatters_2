@@ -2,15 +2,15 @@
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:chatters_2/Models/user.dart';
-import 'package:chatters_2/Navigaitions/routes_names.dart';
-import 'package:chatters_2/Support/audio_utils.dart';
-import 'package:chatters_2/Support/dialogs.dart';
+import 'package:chatters_2/models/user.dart';
+import 'package:chatters_2/navigaitions/routes_names.dart';
+import 'package:chatters_2/support/audio_utils.dart';
+import 'package:chatters_2/support/dialogs.dart';
 import 'package:flutter/material.dart';
 
-import 'package:chatters_2/API/api.dart';
-import 'package:chatters_2/Models/messages.dart';
-import 'package:chatters_2/Support/data_utils.dart';
+import 'package:chatters_2/api/api.dart';
+import 'package:chatters_2/models/messages.dart';
+import 'package:chatters_2/support/data_utils.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';

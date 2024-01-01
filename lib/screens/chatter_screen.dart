@@ -2,7 +2,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_final_fields
 import 'dart:io';
 
-import 'package:chatters_2/Support/audio_utils.dart';
+import 'package:chatters_2/support/audio_utils.dart';
 import 'package:chatters_2/bloc/message_bloc/message_states.dart';
 import 'package:chatters_2/core/repository/message_repo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,12 +12,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
-import 'package:chatters_2/API/api.dart';
-import 'package:chatters_2/Models/messages.dart';
-import 'package:chatters_2/Models/user.dart';
-import 'package:chatters_2/Navigaitions/routes_names.dart';
-import 'package:chatters_2/Support/data_utils.dart';
-import 'package:chatters_2/Widgets/messages.dart';
+import 'package:chatters_2/api/api.dart';
+import 'package:chatters_2/models/messages.dart';
+import 'package:chatters_2/models/user.dart';
+import 'package:chatters_2/navigaitions/routes_names.dart';
+import 'package:chatters_2/support/data_utils.dart';
+import 'package:chatters_2/widgets/messages.dart';
 import 'package:chatters_2/bloc/message_bloc/message_bloc.dart';
 import 'package:chatters_2/bloc/message_bloc/message_event.dart';
 import 'package:audioplayers/audioplayers.dart';

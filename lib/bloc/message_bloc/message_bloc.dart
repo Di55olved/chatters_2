@@ -1,8 +1,8 @@
 // ignore_for_file: avoid_print
 
-import 'package:chatters_2/API/api.dart';
-import 'package:chatters_2/Models/messages.dart';
-import 'package:chatters_2/Models/user.dart';
+import 'package:chatters_2/api/api.dart';
+import 'package:chatters_2/models/messages.dart';
+import 'package:chatters_2/models/user.dart';
 import 'package:chatters_2/core/repository/message_repo.dart';
 import 'package:chatters_2/bloc/message_bloc/message_event.dart';
 import 'package:chatters_2/bloc/message_bloc/message_states.dart';

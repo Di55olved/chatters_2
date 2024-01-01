@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:developer';
 
-import 'package:chatters_2/API/api.dart';
-import 'package:chatters_2/Navigaitions/routes_names.dart';
-import 'package:chatters_2/Widgets/my_assets.dart';
+import 'package:chatters_2/api/api.dart';
+import 'package:chatters_2/navigaitions/routes_names.dart';
+import 'package:chatters_2/widgets/my_assets.dart';
 import 'package:chatters_2/core/repository/message_repo.dart';
 import 'package:chatters_2/core/repository/user_repo.dart';
 import 'package:flutter/material.dart';

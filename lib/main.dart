@@ -1,5 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:chatters_2/Navigaitions/my_navigations.dart';
+import 'package:chatters_2/navigaitions/my_navigations.dart';
 import 'package:chatters_2/core/message_api_client.dart';
 import 'package:chatters_2/core/repository/message_repo.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -10,10 +10,10 @@ import 'package:flutter_notification_channel/notification_importance.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
-import 'package:chatters_2/API/api.dart';
+import 'package:chatters_2/api/api.dart';
 import 'package:chatters_2/core/network.dart';
 import 'package:chatters_2/core/repository/user_repo.dart';
-import 'firebase_options.dart';
+import 'core/firebase_options.dart';
 
 //Mandatory objects
 APIs obj = APIs();

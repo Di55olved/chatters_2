@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:chatters_2/Models/messages.dart';
-import 'package:chatters_2/Models/user.dart';
+import 'package:chatters_2/models/messages.dart';
+import 'package:chatters_2/models/user.dart';
 import 'package:equatable/equatable.dart';
 
 abstract class MsgEvent extends Equatable {

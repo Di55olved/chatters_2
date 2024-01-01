@@ -1,9 +1,9 @@
 // ignore_for_file: use_build_context_synchronously, avoid_print, duplicate_ignore
 
-import 'package:chatters_2/API/api.dart';
-import 'package:chatters_2/Navigaitions/routes_names.dart';
-import 'package:chatters_2/Screens/auth/sign_up.dart';
-import 'package:chatters_2/Widgets/my_assets.dart';
+import 'package:chatters_2/api/api.dart';
+import 'package:chatters_2/navigaitions/routes_names.dart';
+import 'package:chatters_2/screens/auth/sign_up.dart';
+import 'package:chatters_2/widgets/my_assets.dart';
 import 'package:chatters_2/core/repository/message_repo.dart';
 import 'package:chatters_2/core/repository/user_repo.dart';
 import 'package:firebase_auth/firebase_auth.dart';

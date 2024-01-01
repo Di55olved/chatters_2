@@ -1,4 +1,4 @@
-import 'package:chatters_2/Models/messages.dart';
+import 'package:chatters_2/models/messages.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
