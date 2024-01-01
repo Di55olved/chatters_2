@@ -10,6 +10,10 @@ class MsgRepository {
 
   MsgRepository({required this.messageApiClient});
 
+  Future<List<Messages>> getMsgMoc() async {
+    return messageApiClient.getAllMsgMoc();
+  }
+
   Future<Stream<QuerySnapshot<Map<String, dynamic>>>> getMsg(Cuser user) async {
     return messageApiClient.getAllMessages(user);
   }

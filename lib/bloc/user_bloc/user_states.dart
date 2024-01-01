@@ -1,3 +1,4 @@
+import 'package:chatters_2/Models/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
@@ -16,6 +17,15 @@ class UserLoaded extends UserState {
   final Stream<QuerySnapshot<Map<String, dynamic>>> Function() user;
 
   UserLoaded({required this.user}) : super([user]);
+
+  @override
+  List<Object?> get props => [user];
+}
+
+class UserLoadedMoc extends UserState {
+  final List<Cuser> user;
+
+  UserLoadedMoc ({required this.user}) : super([user]);
 
   @override
   List<Object?> get props => [user];

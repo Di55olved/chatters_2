@@ -17,6 +17,7 @@ class MessageApiClient {
   static FirebaseFirestore firestore = FirebaseFirestore.instance;
   MessageApiClient({required this.httpClient});
   static FirebaseStorage storage = FirebaseStorage.instance;
+  
 
   Stream<QuerySnapshot<Map<String, dynamic>>> getAllMessages(Cuser user) {
     return firestore
@@ -79,6 +80,14 @@ class MessageApiClient {
     await sendMessage(chatUser, audioURL, MsgType.audio);
   
 }
+
+  Future<List<Messages>> getAllMsgMoc() async{ 
+    return [
+      Messages(toId: 'XYZ', msg: 'Hello', read: 'read', type: MsgType.text, fromId: 'fromId', sent: 'sent'),
+      Messages(toId: 'ABC', msg: 'Hi', read: 'read', type: MsgType.image, fromId: 'fromId', sent: 'sent')
+
+    ];
+  }
 }
 
    // // Method for sending images using the existing sendChatImage API

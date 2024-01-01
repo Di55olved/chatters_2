@@ -1,6 +1,4 @@
-
-
-
+import 'package:chatters_2/Models/user.dart';
 import 'package:chatters_2/bloc/user_bloc/user_events.dart';
 import 'package:chatters_2/bloc/user_bloc/user_states.dart';
 import 'package:chatters_2/core/repository/user_repo.dart';
@@ -15,30 +13,29 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       await _getUser(emit);
     });
 
-
+    on<FetchUserMoc>((event, emit) async {
+      await _getUserMoc(emit);
+    });
   }
 
   Future<void> _getUser(Emitter<UserState> emit) async {
     emit(UserLoading());
     try {
-      final Stream<QuerySnapshot<Map<String, dynamic>>> Function() user = await userRepository.getuser();
+      final Stream<QuerySnapshot<Map<String, dynamic>>> Function() user =
+          await userRepository.getuser();
       emit(UserLoaded(user: user));
     } catch (e) {
       emit(UserError(errorMsg: e.toString()));
     }
   }
-    // on<FetchUserMoc>((event, emit) async {
-    //   await _getUserMoc(emit);
-    // });
 
-
-  // Future<void> _getUserMoc(Emitter<UserState> emit) async {
-  //   emit(UserLoading());
-  //   try {
-  //     final Future<List<Cuser>> user = await userRepository.getUserMoc();
-  //     emit(UserLoaded(user: user));
-  //   } catch (e) {
-  //     emit(UserError(errorMsg: e.toString()));
-  //   }
-  // }
+  Future<void> _getUserMoc(Emitter<UserState> emit) async {
+    emit(UserLoading());
+    try {
+      final List<Cuser> user = await userRepository.getuserMoc();
+      emit(UserLoadedMoc(user: user));
+    } catch (e) {
+      emit(UserError(errorMsg: e.toString()));
+    }
+  }
 }

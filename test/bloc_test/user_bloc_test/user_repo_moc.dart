@@ -1,33 +1,43 @@
-
+import 'package:chatters_2/Models/user.dart';
 import 'package:chatters_2/core/network.dart';
 import 'package:chatters_2/core/repository/user_repo.dart';
+import 'package:equatable/equatable.dart';
+import 'package:mockito/mockito.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:rxdart/rxdart.dart';
 
-class MockUserRepo implements UserRepository {
+// Create a mock class for UserRepository
+
+class MockUserRepo implements UserRepository  {
   @override
   Future<Stream<QuerySnapshot<Map<String, dynamic>>> Function()> getuser() {
     // TODO: implement getuser
     throw UnimplementedError();
-   //      return BehaviorSubject<QuerySnapshot<Map<String, dynamic>>>.fromFuture(
-    //   Future.value(
-    //         QueryDocumentSnapshot<Map<String, dynamic>>(
-    //           data: {
-    //             'id': 'id123',
-    //             'about': 'about',
-    //             'createdAt': 'createdAt',
-    //             'isOnline': false,
-    //             'lastActive': 'lastActive',
-    //             'email': 'email',
-    //             'pushToken': 'pushToken',
-    //             'name': 'Elenios',
-    //             'image': 'image',
-    //           },
-    //         ),
-      
-    //   ),
-    // ).stream;
+  }
 
+  @override
+  Future<List<Cuser>> getuserMoc() {
+    return Future.value([
+      Cuser(
+          id: 'id',
+          about: 'about',
+          createdAt: 'createdAt',
+          isOnline: false,
+          lastActive: 'lastActive',
+          email: 'email',
+          pushToken: 'pushToken',
+          name: 'Faris',
+          image: 'image'),
+      Cuser(
+          id: 'id',
+          about: 'about',
+          createdAt: 'createdAt',
+          isOnline: false,
+          lastActive: 'lastActive',
+          email: 'email',
+          pushToken: 'pushToken',
+          name: 'Ejaz',
+          image: 'image'),
+    ]);
   }
 
   @override

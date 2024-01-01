@@ -2,7 +2,9 @@ import 'package:chatters_2/Models/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:mockito/mockito.dart';
 
 class UserApiClient {
   final http.Client httpClient;
@@ -38,9 +40,16 @@ class UserApiClient {
     await myUsersCollectionRef.add(userData);
   }
 
-  
+    Future<List<Cuser>> getAllUsersMoc() async {
+    return [
+      Cuser(id: 'id', about: 'about', createdAt: 'createdAt', isOnline: false, lastActive: 'lastActive', email: 'email', pushToken: 'pushToken', name: 'Faris', image: 'image'),
+      Cuser(id: 'id', about: 'about', createdAt: 'createdAt', isOnline: false, lastActive: 'lastActive', email: 'email', pushToken: 'pushToken', name: 'Ejaz', image: 'image'),
+      ];
+  }
+
 
 }
+  
 
 
   // Stream<QuerySnapshot<Map<String, dynamic>>> fetchUserMoc() {

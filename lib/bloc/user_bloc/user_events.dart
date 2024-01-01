@@ -13,9 +13,9 @@ class FetchUser extends UserEvent {
 }
 
 
-// class FetchUserMoc extends UserEvent {
-//   const FetchUserMoc() : super();
+class FetchUserMoc extends UserEvent {
+  const FetchUserMoc() : super();
 
-//   @override
-//   List<Object?> get props => throw UnimplementedError();
-// }
+  @override
+  List<Object?> get props => throw UnimplementedError();
+}

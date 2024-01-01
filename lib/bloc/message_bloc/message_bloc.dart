@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'package:chatters_2/API/api.dart';
+import 'package:chatters_2/Models/messages.dart';
 import 'package:chatters_2/Models/user.dart';
 import 'package:chatters_2/core/repository/message_repo.dart';
 import 'package:chatters_2/bloc/message_bloc/message_event.dart';
@@ -17,6 +18,10 @@ class MsgBloc extends Bloc<MsgEvent, MsgState> {
       await _getMessages(event.user, emit);
     });
 
+    on<FetchMsgMoc>((event, emit) async {
+      await _getMsgMoc(emit);
+    });
+
     on<SendMessage>((event, emit) async {
       await _sendMessages(event.user, event.message, event.type, emit);
     });
@@ -25,10 +30,9 @@ class MsgBloc extends Bloc<MsgEvent, MsgState> {
       await _sendImgMessages(event.user, event.file, emit);
     });
 
-        on<SendVoiceMessage>((event, emit) async {
+    on<SendVoiceMessage>((event, emit) async {
       await _sendVoiceMessage(event.user, event.file, emit);
     });
-
   }
 
   Future<void> _getMessages(user, emit) async {
@@ -124,8 +128,8 @@ class MsgBloc extends Bloc<MsgEvent, MsgState> {
     }
   }
 
-   Future<void> _sendVoiceMessage(user,file,emit) async {
-        try {
+  Future<void> _sendVoiceMessage(user, file, emit) async {
+    try {
       bool check = await FirebaseFirestore.instance
           .collection('users')
           .doc(user.id)
@@ -161,6 +165,15 @@ class MsgBloc extends Bloc<MsgEvent, MsgState> {
     } catch (e) {
       emit(MsgError(errorMsg: 'Unknown error occurred'));
     }
+  }
 
-   }
+  Future<void> _getMsgMoc(Emitter<MsgState> emit) async {
+    emit(MsgLoading());
+    try {
+      final List<Messages> message = await msgRepository.getMsgMoc();
+      emit(MsgLoadedMoc(messages: message));
+    } catch (e) {
+      emit(MsgError(errorMsg: e.toString()));
+    }
+  }
 }

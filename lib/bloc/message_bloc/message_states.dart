@@ -1,3 +1,4 @@
+import 'package:chatters_2/Models/messages.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
@@ -17,6 +18,16 @@ class MsgLoaded extends MsgState {
   final Stream<QuerySnapshot<Map<String, dynamic>>> messages;
 
   MsgLoaded({required this.messages});
+
+  @override
+  List<Object?> get props => [messages];
+}
+
+
+class MsgLoadedMoc extends MsgState {
+  final List<Messages> messages;
+
+  MsgLoadedMoc({required this.messages});
 
   @override
   List<Object?> get props => [messages];

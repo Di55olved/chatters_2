@@ -22,6 +22,15 @@ class FetchMsg extends MsgEvent {
   List<Object?> get props => [user];
 }
 
+class FetchMsgMoc extends MsgEvent {
+  final Cuser user;
+
+  const FetchMsgMoc({required this.user});
+
+  @override
+  List<Object?> get props => [user];
+}
+
 class SendMessage extends MsgEvent {
   final Cuser user;
   final String message;
