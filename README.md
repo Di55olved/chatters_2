@@ -1,10 +1,10 @@
 # chatters_2
 
-A new Flutter project.
+App Dev final project. Final commit in testing branch.
 
 ## Getting Started
+A chatting application exclusive to iba students.Purpose is to connect all iba students on one closed platform.
 
-This project is a starting point for a Flutter application.
 
 A few resources to get you started if this is your first Flutter project:
 
